@@ -707,6 +707,7 @@
       flex: 1;
       border: 0;
       display: block;
+      -webkit-overflow-scrolling: touch;
     }
 
     .classrow {
@@ -873,7 +874,7 @@
 
   <header>
     <div>
-      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.2.1</div>
+      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.1.1</div>
       <h1>Uulan Ba?</h1>
       <p>Rain dashboard for major PH cities &mdash; Open-Meteo data, GarbinWx radar, PAGASA satellite and live advisories.</p>
     </div>
@@ -905,8 +906,14 @@
         </div>
       </div>
       <div class="tile tile-advisory">
-        <div class="tile-label"><span>PAGASA weather advisory (live)</span><a href="https://www.pagasa.dost.gov.ph/weather/weather-advisory" target="_blank" rel="noopener">open &#8599;</a></div>
-        <iframe id="frame-advisory" src="https://pubfiles.pagasa.dost.gov.ph/tamss/weather/advisory.pdf#toolbar=0&navpanes=0&scrollbar=0" loading="lazy"></iframe>
+        <div class="tile-label">
+          <span>PAGASA weather advisory (live)</span>
+          <div style="display: flex; gap: .6rem;">
+            <a href="https://pubfiles.pagasa.dost.gov.ph/tamss/weather/advisory.pdf" target="_blank" rel="noopener">PDF &#8599;</a>
+            <a href="https://www.pagasa.dost.gov.ph/weather/weather-advisory" target="_blank" rel="noopener">site &#8599;</a>
+          </div>
+        </div>
+        <iframe id="frame-advisory" src="https://docs.google.com/gview?url=https://pubfiles.pagasa.dost.gov.ph/tamss/weather/advisory.pdf&embedded=true" loading="lazy"></iframe>
       </div>
     </div>
 
@@ -1010,7 +1017,8 @@
   </main>
 
   <footer>
-    River 2026
+    River<br>
+    Data: Open-Meteo (rainfall) &middot; GarbinWx (radar) &middot; PAGASA (satellite + advisory + regional warnings). Built for quick personal reference.
   </footer>
 
   <script>

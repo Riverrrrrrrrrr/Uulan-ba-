@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uulan Ba?</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+  <style>
+    :root {
+      --bg: #0F151C;
+      --panel: #1A232E;
+      --panel2: #212D3A;
+      --line: #2B3947;
+      --text: #E7ECF1;
+      --muted: #8FA1B0;
+      --rain: #4FA3D1;
+      --amber: #E8A33D;
+      --orange: #E07A2E;
+      --red: #D6524E;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+    }
+
+    header {
+      padding: 1.4rem 1.5rem 1.1rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: .8rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      font-size: .7rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--rain);
+      font-weight: 700;
+      margin-bottom: .25rem;
+    }
+
+    h1 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.75rem;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    header p {
+      color: var(--muted);
+      margin: .2rem 0 0;
+      font-size: .82rem;
+      max-width: 520px;
+    }
+
+    .refresh {
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: .45rem .95rem;
+      border-radius: 6px;
+      font-size: .78rem;
+      cursor: pointer;
+    }
+
+    .refresh:hover {
+      border-color: var(--rain);
+    }
+
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.1rem 1.5rem 3rem;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: .76rem;
+      margin-bottom: .7rem;
+    }
+
+    .row {
+      display: grid;
+      gap: .75rem;
+      margin-bottom: .75rem;
+    }
+
+    .row-cities {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .row-2col {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .row-8-4 {
+      grid-template-columns: 2fr 1fr;
+    }
+
+    .row-1col {
+      grid-template-columns: 1fr;
+    }
+
+    .row-3col {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .tile {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: .85rem 1rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tile-label {
+      font-size: .66rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: .4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+
+    .tile-label a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .tile-label a:hover {
+      color: var(--rain);
+    }
+
+    /* city tiles */
+    .tile-city {
+      padding: .7rem .8rem;
+    }
+
+    .tile-city .bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+    }
+
+    .cityname {
+      font-weight: 600;
+      font-size: .82rem;
+      margin-bottom: .05rem;
+    }
+
+    .citymeta {
+      color: var(--muted);
+      font-size: .68rem;
+      margin-bottom: .4rem;
+    }
+
+    .rainrow {
+      display: flex;
+      align-items: baseline;
+      gap: .3rem;
+      margin-top: auto;
+    }
+
+    .rainval {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .rainunit {
+      color: var(--muted);
+      font-size: .65rem;
+    }
+
+    .lvl-none {
+      background: #1E2A33;
+      color: #7FA0B0;
+    }
+
+    .lvl-adv-expect {
+      background: #16334A;
+      color: #7EC4F0;
+    }
+
+    .lvl-adv-affect {
+      background: #0E2440;
+      color: #3E7FA8;
+    }
+
+    .lvl-heavy {
+      background: #4A3D0F;
+      color: #F0C419;
+    }
+
+    .lvl-intense {
+      background: #40260F;
+      color: #E07A2E;
+    }
+
+    .lvl-torrential {
+      background: #3D1717;
+      color: #D6524E;
+    }
+
+    .lvl-expecting {
+      background: #3D1930;
+      color: #E85D9E;
+    }
+
+    .lvl-affecting {
+      background: #2A1B45;
+      color: #9B6FE8;
+    }
+
+    /* radar (full width, tall) — our own Leaflet-based viewer */
+    .tile-radar {
+      padding: 0;
+      height: 720px;
+    }
+
+    .tile-sat {
+      padding: 0;
+      height: 420px;
+    }
+
+    .tile-radar .tile-label,
+    .tile-sat .tile-label {
+      padding: .75rem 1rem .3rem;
+      margin-bottom: 0;
+    }
+
+    .tile-radar #radarmap {
+      width: 100%;
+      flex: 1;
+    }
+
+    .tile-sat img {
+      width: 100%;
+      flex: 1;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .radarbar {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .4rem .8rem;
+      border-top: 1px solid var(--line);
+      font-size: .72rem;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    .radarbar button {
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: .65rem;
+      line-height: 1;
+      padding: 0;
+    }
+
+    .radarbar button:hover {
+      border-color: var(--rain);
+    }
+
+    /* controls panel, GarbinWx-style but themed */
+    .tile-controls .tile-label {
+      margin-bottom: .5rem;
+    }
+
+    .controls-live {
+      color: var(--rain);
+      font-weight: 700;
+    }
+
+    .controls-time {
+      font-family: 'Courier New', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: .9rem;
+    }
+
+    .controls-group {
+      margin-bottom: .8rem;
+    }
+
+    .controls-groupname {
+      display: block;
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: .35rem;
+    }
+
+    .controls-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .segbtns {
+      display: flex;
+      gap: .4rem;
+      flex-wrap: wrap;
+    }
+
+    .segbtn {
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .75rem;
+      font-weight: 600;
+      padding: .4rem .8rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .segbtn:hover {
+      border-color: var(--rain);
+    }
+
+    .segbtn.active {
+      background: #152A38;
+      border-color: var(--rain);
+      color: var(--rain);
+    }
+
+    .controls-transport {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .7rem;
+      margin-top: .9rem;
+      padding-top: .9rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .controls-endlabel {
+      font-size: .65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .transportbtn {
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: .78rem;
+      font-weight: 600;
+      padding: .5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .transportbtn:hover {
+      border-color: var(--rain);
+    }
+
+    .transportbtn.play {
+      background: #152A38;
+      border-color: var(--rain);
+      color: var(--rain);
+      min-width: 90px;
+    }
+
+    /* New Unified Legend Layout */
+    .radar-legend {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 1000;
+      background: rgba(15, 21, 28, .92);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 1.4rem 1rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .legend-wrapper {
+      position: relative;
+      height: 220px;
+      width: 14px;
+      /* The left/right margins provide physical space for the absolute-positioned labels */
+      margin: 0 4.8rem 0 2.5rem;
+    }
+
+    .legend-bar-center {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 1px solid #fff;
+    }
+
+    .legend-block-layer {
+      position: absolute;
+      left: 0;
+      right: 0;
+    }
+
+    .legend-label {
+      position: absolute;
+      color: var(--text);
+      font-size: .68rem;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      /* This perfectly centers the text vertically on its bottom% coordinate */
+      transform: translateY(50%);
+    }
+
+    .legend-label.left {
+      right: 100%;
+      margin-right: 8px;
+    }
+
+    .legend-label.right {
+      left: 100%;
+      margin-left: 8px;
+    }
+
+    /* Keep the radar image sharp-edged instead of browser-blurred when zoomed in past
+       its native resolution. Trade-off: edges look blocky/pixelated up close instead
+       of smooth, but detail isn't smeared away — matches how GarbinWx's own view stays
+       crisp rather than going soft. */
+    .radar-overlay-img {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    /* Labels are baked into the basemap tile images themselves — can't add a real
+       CSS text-outline to them. This filter boosts brightness/contrast on the
+       whole basemap as the closest practical fix for legibility. */
+    .basemap-contrast {
+      filter: brightness(1.25) contrast(1.15);
+    }
+
+    .satloopbar {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .4rem .8rem;
+      border-top: 1px solid var(--line);
+      font-size: .7rem;
+      color: var(--muted);
+    }
+
+    .satplay {
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: .65rem;
+      line-height: 1;
+      padding: 0;
+    }
+
+    .satplay:hover {
+      border-color: var(--rain);
+    }
+
+    .livedot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #5EAE6A;
+      display: inline-block;
+      margin-right: 5px;
+      transition: background .3s;
+    }
+
+    .livedot.down {
+      background: #D6524E;
+    }
+
+    .livedot.checking {
+      background: #8FA1B0;
+    }
+
+    /* advisory pdf */
+    .tile-advisory {
+      padding: 0;
+      height: 420px;
+    }
+
+    .tile-advisory .tile-label {
+      padding: .75rem 1rem .3rem;
+      margin-bottom: 0;
+    }
+
+    .tile-advisory iframe {
+      width: 100%;
+      flex: 1;
+      border: 0;
+      display: block;
+    }
+
+    .classrow {
+      display: flex;
+      align-items: flex-start;
+      gap: .6rem;
+      padding: .55rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .classrow:last-child {
+      border-bottom: none;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: .3rem;
+    }
+
+    .classtext {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .classname {
+      font-weight: 600;
+      font-size: .8rem;
+    }
+
+    .classrate {
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .classaction {
+      color: var(--muted);
+      font-size: .72rem;
+      margin-top: .1rem;
+    }
+
+    .classsection {
+      font-size: .66rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      font-weight: 700;
+      margin: .7rem 0 .3rem;
+      padding-top: .5rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .classsection-first {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+
+    /* heavy rainfall warning = panahon embed (stretches to match criteria tile's natural height) */
+    .tile-hrw {
+      padding: 0;
+    }
+
+    .tile-hrw .tile-label {
+      padding: .75rem 1rem .3rem;
+      margin-bottom: 0;
+    }
+
+    .tile-hrw iframe {
+      width: 100%;
+      flex: 1;
+      border: 0;
+      display: block;
+      min-height: 400px;
+    }
+
+    .hrw-hint {
+      background: #152A38;
+      border-bottom: 1px solid var(--line);
+      color: var(--rain);
+      font-size: .75rem;
+      padding: .5rem 1rem;
+    }
+
+    .tile-criteria {
+      align-self: start;
+    }
+
+    /* links */
+    .linkitem {
+      background: var(--panel2);
+      border-left: 3px solid var(--amber);
+      border-radius: 8px;
+      padding: .7rem .85rem;
+      font-size: .78rem;
+    }
+
+    .linkitem a {
+      color: var(--rain);
+      text-decoration: none;
+    }
+
+    .linkitem a:hover {
+      text-decoration: underline;
+    }
+
+    .linkitem .tag {
+      display: block;
+      font-size: .63rem;
+      font-weight: 700;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: .25rem;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: .7rem;
+      padding: 1.4rem;
+      border-top: 1px solid var(--line);
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 900px) {
+      .row-2col,
+      .row-8-4,
+      .row-3col {
+        grid-template-columns: 1fr;
+      }
+
+      .tile-radar {
+        height: 600px;
+      }
+
+      .tile-sat,
+      .tile-advisory {
+        height: 360px;
+      }
+
+      .tile-hrw iframe {
+        min-height: 420px;
+      }
+
+      .controls-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <div class="eyebrow">Philippines &middot; live conditions</div>
+      <h1>Uulan Ba?</h1>
+      <p>Rain dashboard for major PH cities &mdash; Open-Meteo data, GarbinWx radar, PAGASA satellite and live advisories.</p>
+    </div>
+    <button class="refresh" onclick="loadRain()">Refresh</button>
+  </header>
+
+  <main>
+    <p class="status" id="status">Loading rainfall data&hellip;</p>
+
+    <div class="row row-cities" id="citygrid-slot"></div>
+
+    <div class="row row-1col">
+      <div class="tile tile-radar">
+        <div class="tile-label"><span id="radarTileTitle">Live radar &middot; dBZ reflectivity (source: PAGASA, via GarbinWx)</span><a href="https://garbinwx.org/interactive-map" target="_blank" rel="noopener">open source &#8599;</a></div>
+        <div id="radarmap" style="position:relative;">
+          <div class="radar-legend" id="radarLegendBox">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+        <div class="radarbar">
+          <span id="radarframeinfo">Loading radar&hellip;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row row-1col">
+      <div class="tile tile-controls">
+        <div class="tile-label"><span>Controls</span><span id="radarLiveFrame" class="controls-live">Live frame: &mdash;</span></div>
+        <div class="controls-time" id="radarFrameTime">&mdash;</div>
+
+        <div class="controls-group">
+          <span class="controls-groupname">Radar product type</span>
+          <div class="segbtns">
+            <button class="segbtn active" data-product="dbz">Reflectivity (dBZ)</button>
+            <button class="segbtn" data-product="rr" title="Not confirmed available from source &mdash; will fall back to dBZ if missing">Rain Rate (mm/hr)</button>
+          </div>
+        </div>
+
+        <div class="controls-row">
+          <div class="controls-group">
+            <span class="controls-groupname">No. of frames</span>
+            <div class="segbtns">
+              <button class="segbtn" data-frames="16">16</button>
+              <button class="segbtn active" data-frames="24">24</button>
+              <button class="segbtn" data-frames="36">36</button>
+            </div>
+          </div>
+          <div class="controls-group">
+            <span class="controls-groupname">Interval delay</span>
+            <div class="segbtns">
+              <button class="segbtn" data-delay="250">250ms</button>
+              <button class="segbtn active" data-delay="450">450ms</button>
+              <button class="segbtn" data-delay="700">700ms</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls-transport">
+          <span class="controls-endlabel">Oldest</span>
+          <button id="radarStepBack" class="transportbtn" title="Step back">&lsaquo; Step</button>
+          <button id="radarPlayBig" class="transportbtn play" title="Play/pause">&#9654; Play</button>
+          <button id="radarStepFwd" class="transportbtn" title="Step forward">Step &rsaquo;</button>
+          <span class="controls-endlabel">Newest</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row row-2col">
+      <div class="tile tile-sat">
+        <div class="tile-label"><span><span class="livedot checking" id="dot-sat" title="Connection status"></span>Satellite &middot; Himawari IR (PAGASA)</span><span id="satstamp" style="font-weight:600;"></span></div>
+        <img id="satimg" src="https://src.meteopilipinas.gov.ph/repo/mtsat-colored/24hour/1-him-colored.png" alt="Latest Himawari satellite image over the Philippines">
+        <div class="satloopbar">
+          <button class="satplay" id="satplaybtn" title="Play/pause loop">&#10074;&#10074;</button>
+          <span id="satframeinfo">Loading frames&hellip;</span>
+        </div>
+      </div>
+      <div class="tile tile-advisory">
+        <div class="tile-label"><span>PAGASA weather advisory (live)</span><a href="https://www.pagasa.dost.gov.ph/weather/weather-advisory" target="_blank" rel="noopener">open &#8599;</a></div>
+        <iframe id="frame-advisory" src="https://pubfiles.pagasa.dost.gov.ph/tamss/weather/advisory.pdf#toolbar=0&navpanes=0&scrollbar=0" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="row row-8-4">
+      <div class="tile tile-hrw">
+        <div class="tile-label"><span>Live hazard map (PANaHON)</span><a href="https://www.panahon.gov.ph" target="_blank" rel="noopener">open &#8599;</a></div>
+        <div class="hrw-hint">Tip: inside the map, open the notification menu and pick your desired layer to see the live color-coded warning overlay.</div>
+        <iframe id="frame-hrw" src="https://www.panahon.gov.ph" loading="lazy"></iframe>
+      </div>
+      <div class="tile tile-criteria">
+        <div class="tile-label"><span>Warning criteria (PANaHON layers)</span></div>
+        <div class="classsection classsection-first">Rainfall Advisory</div>
+        <div id="ralist"></div>
+        <div class="classsection">Heavy Rainfall Warning (HR-WS)</div>
+        <div id="classlist"></div>
+        <div class="classsection">Thunderstorm Advisory</div>
+        <div id="tsalist"></div>
+      </div>
+    </div>
+
+    <div class="row row-3col">
+      <div class="linkitem">
+        <span class="tag">PAGASA</span>
+        Full site &mdash; bulletins, cyclone tracking, regional forecasts &mdash;
+        <a href="https://www.pagasa.dost.gov.ph/" target="_blank" rel="noopener">pagasa.dost.gov.ph</a>
+      </div>
+      <div class="linkitem">
+        <span class="tag">NDRRMC</span>
+        National disaster response updates and situational reports &mdash;
+        <a href="https://ndrrmc.gov.ph/" target="_blank" rel="noopener">ndrrmc.gov.ph</a>
+      </div>
+      <div class="linkitem">
+        <span class="tag">MMDA</span>
+        Metro Manila flood control advisories, road closures &mdash;
+        <a href="https://mmda.gov.ph/" target="_blank" rel="noopener">mmda.gov.ph</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    River<br>
+    Data: Open-Meteo (rainfall) &middot; GarbinWx (radar) &middot; PAGASA (satellite + advisory + regional warnings). Built for quick personal reference.
+  </footer>
+
+  <script>
+    const cities = [
+      { name: "Manila", lat: 14.5995, lon: 120.9842 },
+      { name: "Quezon City", lat: 14.6760, lon: 121.0437 },
+      { name: "Cebu City", lat: 10.3157, lon: 123.8854 },
+      { name: "Davao City", lat: 7.1907, lon: 125.4553 },
+      { name: "Baguio", lat: 16.4023, lon: 120.5960 },
+      { name: "Iloilo City", lat: 10.7202, lon: 122.5621 },
+      { name: "Cagayan de Oro", lat: 8.4542, lon: 124.6319 },
+      { name: "Legazpi", lat: 13.1391, lon: 123.7438 },
+      { name: "Tacloban", lat: 11.2543, lon: 125.0000 },
+    ];
+
+    function classify(mmhr) {
+      if (mmhr < 7.5) return { label: "Advisory", cls: "lvl-adv-affect" };
+      if (mmhr < 15) return { label: "Yellow", cls: "lvl-heavy" };
+      if (mmhr < 30) return { label: "Orange", cls: "lvl-intense" };
+      return { label: "Red", cls: "lvl-torrential" };
+    }
+
+    function barColor(cls) {
+      const map = {
+        "lvl-none": "#2C3F4D",
+        "lvl-adv-expect": "#7EC4F0",
+        "lvl-adv-affect": "#3E7FA8",
+        "lvl-heavy": "#F0C419",
+        "lvl-intense": "#E07A2E",
+        "lvl-torrential": "#D6524E",
+        "lvl-expecting": "#E85D9E",
+        "lvl-affecting": "#9B6FE8"
+      };
+      return map[cls] || "#2C3F4D";
+    }
+
+    async function loadRain() {
+      const slot = document.getElementById('citygrid-slot');
+      const status = document.getElementById('status');
+      status.textContent = "Loading rainfall data…";
+      slot.innerHTML = "";
+      try {
+        const results = await Promise.all(cities.map(async c => {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=precipitation,rain,temperature_2m&timezone=Asia%2FManila`;
+          const r = await fetch(url);
+          const d = await r.json();
+          return { name: c.name, precip: d.current?.precipitation ?? 0, temp: d.current?.temperature_2m };
+        }));
+        results.forEach(res => {
+          const info = classify(res.precip);
+          const tile = document.createElement('div');
+          tile.className = 'tile tile-city';
+          tile.innerHTML = `
+            <div class="bar" style="background:${barColor(info.cls)}"></div>
+            <div class="cityname">${res.name}</div>
+            <div class="citymeta">${res.temp !== undefined ? res.temp.toFixed(1) + '°C' : ''}</div>
+            <div class="rainrow"><span class="rainval">${res.precip.toFixed(1)}</span><span class="rainunit">mm/hr</span></div>
+          `;
+          slot.appendChild(tile);
+        });
+        const now = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
+        status.textContent = `Updated ${now} (Manila time) · source: Open-Meteo`;
+      } catch (e) {
+        status.textContent = "Couldn't load live data right now — try refresh.";
+      }
+    }
+
+    // Real check for the satellite image — this one's fully reliable since it's a direct
+    // resource load, not a cross-site frame.
+    (function() {
+      const img = document.getElementById('satimg');
+      const dot = document.getElementById('dot-sat');
+      img.addEventListener('load', () => { dot.classList.remove('down', 'checking'); });
+      img.addEventListener('error', () => { dot.classList.remove('checking'); dot.classList.add('down'); });
+    })();
+
+    // Note: no status dot on the radar / advisory / PANaHON tiles — a cross-site iframe's
+    // "load" event fires as soon as the outer page responds, even if the app inside never
+    // finishes (like GarbinWx's stuck loading spinner). JS can't see past that boundary,
+    // so a dot there would just be guessing. Use each tile's "open ↗" link to check directly.
+
+    // Satellite loop: the "24hour" folder looks like a numbered frame sequence
+    // (1-him-colored.png, 2-him-colored.png, ...) where 1 is the latest. We probe
+    // how many frames actually exist, then cycle through them like a GIF. If only
+    // frame 1 loads, it falls back to a single still image that just re-fetches
+    // periodically — no error shown either way.
+    (function() {
+      const BASE = "https://src.meteopilipinas.gov.ph/repo/mtsat-colored/24hour/";
+      const MAX_PROBE = 12; // frames look ~10 min apart, so 12 ≈ last 2 hours
+      const img = document.getElementById('satimg');
+      const info = document.getElementById('satframeinfo');
+      const playBtn = document.getElementById('satplaybtn');
+      const stamp = document.getElementById('satstamp');
+      let frames = [];
+      let idx = 0;
+      let playing = true;
+      let timer = null;
+
+      function probeFrame(n) {
+        return new Promise(resolve => {
+          const test = new Image();
+          test.onload = () => resolve(BASE + n + "-him-colored.png");
+          test.onerror = () => resolve(null);
+          test.src = BASE + n + "-him-colored.png?probe=" + Date.now();
+        });
+      }
+
+      async function discoverFrames() {
+        const probes = [];
+        for (let n = 1; n <= MAX_PROBE; n++) probes.push(probeFrame(n));
+        const results = await Promise.all(probes);
+        frames = results.filter(Boolean).reverse(); // oldest → newest, ending on latest
+        stamp.textContent = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
+        if (frames.length <= 1) {
+          info.textContent = "Live still (loop frames unavailable)";
+          playBtn.style.display = "none";
+          if (frames.length === 1) img.src = frames[0];
+          return;
+        }
+        idx = frames.length - 1;
+        info.textContent = `${frames.length} frames · looping`;
+        if (playing) startLoop();
+      }
+
+      function showFrame(i) { img.src = frames[i]; }
+
+      const FRAME_MS = 400;
+      const HOLD_LAST_MS = 2500; // pause on the latest frame before restarting
+
+      function startLoop() {
+        stopLoop();
+        scheduleNext();
+      }
+
+      function scheduleNext() {
+        const atLast = idx === frames.length - 1;
+        timer = setTimeout(() => {
+          idx = (idx + 1) % frames.length;
+          showFrame(idx);
+          scheduleNext();
+        }, atLast ? HOLD_LAST_MS : FRAME_MS);
+      }
+
+      function stopLoop() {
+        if (timer) clearTimeout(timer);
+        timer = null;
+      }
+
+      playBtn.addEventListener('click', () => {
+        playing = !playing;
+        playBtn.textContent = playing ? "⏸" : "▶";
+        if (playing) startLoop(); else stopLoop();
+      });
+
+      discoverFrames();
+      setInterval(discoverFrames, 5 * 60 * 1000); // pick up new frames every 5 min
+    })();
+
+    // Custom radar viewer: Leaflet map + PAGASA's radar frames (via GarbinWx's public
+    // data host), our own dark theme. Bounds below are the exact values pulled from
+    // GarbinWx's own source code (activeLeafletBounds) — not a guess, so this should
+    // line up precisely without needing manual calibration.
+    (function() {
+      try {
+        const DATA_BASE = "https://data.garbinwx.org";
+        const TILE_URL = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+
+        const bounds = {
+          south: 3.8016540706290445,
+          west: 115.4154914129329,
+          north: 22.458510294136033,
+          east: 129.51727937415484
+        };
+
+        if (typeof L === 'undefined') throw new Error("Leaflet failed to load (check network/ad-blocker)");
+        const map = L.map('radarmap', {
+          zoomControl: false,
+          attributionControl: false,
+          minZoom: 3,
+          maxZoom: 22,
+          zoomSnap: 0.25,
+          zoomDelta: 0.5,
+          scrollWheelZoom: true
+        }).setView([12.6, 121.8], 6);
+        L.control.zoom({ position: 'topright' }).addTo(map);
+        L.tileLayer(TILE_URL, { maxZoom: 22, maxNativeZoom: 19, className: 'basemap-contrast' }).addTo(map);
+        L.control.attribution({ prefix: false }).addAttribution('Basemap © CARTO · Radar data © PAGASA-DOST via GarbinWx').addTo(map);
+
+        let overlay = null;
+
+        function boundsToLatLngBounds() {
+          return [[bounds.south, bounds.west], [bounds.north, bounds.east]];
+        }
+
+        function showFrame(url) {
+          if (overlay) {
+            overlay.setUrl(url);
+          } else {
+            overlay = L.imageOverlay(url, boundsToLatLngBounds(), { opacity: 0.75, className: 'radar-overlay-img' }).addTo(map);
+          }
+        }
+
+        const info = document.getElementById('radarframeinfo');
+        const liveFrameLabel = document.getElementById('radarLiveFrame');
+        const frameTimeLabel = document.getElementById('radarFrameTime');
+        const playBig = document.getElementById('radarPlayBig');
+        const stepBackBtn = document.getElementById('radarStepBack');
+        const stepFwdBtn = document.getElementById('radarStepFwd');
+
+        let rawFilenames = [];   // oldest → newest, just the "YYYYMMDDHHmm.png" bits
+        let frames = [];         // oldest → newest, full URLs for the current product
+        let idx = 0;
+        let playing = true;
+        let timer = null;
+        let frameCount = 24;
+        let frameDelay = 450;
+        let product = "dbz";     // "dbz" or "rr" — rr is unconfirmed, falls back to dbz
+        const HOLD_LAST_MS = 2500;
+
+        function productPrefix(p) { return p === "rr" ? "RR" : "DBZ"; }
+
+        function buildFrameUrls() {
+          const prefix = productPrefix(product);
+          frames = rawFilenames.map(f => DATA_BASE + "/raw/" + prefix + "-" + f);
+        }
+
+        function formatFrameTime(filename) {
+          // filename like "202608092000.png" -> "Aug 9, 2026, 8:00 PM"
+          const m = filename.match(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})\.png$/);
+          if (!m) return filename;
+          const [, yyyy, mm, dd, hh, min] = m;
+          const d = new Date(`${yyyy}-${mm}-${dd}T${hh}:${min}:00+08:00`);
+          return d.toLocaleString('en-PH', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+        }
+
+        function updateLabels() {
+          liveFrameLabel.textContent = `Live frame: ${idx + 1} / ${frames.length}`;
+          frameTimeLabel.textContent = rawFilenames[idx] ? formatFrameTime(rawFilenames[idx]) + " (UTC+8)" : "—";
+          info.textContent = `${frames.length} frames · ${playing ? "looping" : "paused"}`;
+        }
+
+        function goToFrame(i) {
+          idx = ((i % frames.length) + frames.length) % frames.length;
+          showFrame(frames[idx]);
+          updateLabels();
+        }
+
+        async function loadFrameList() {
+          try {
+            const r = await fetch(DATA_BASE + "/latest/timeReference.json");
+            const d = await r.json();
+            const list = (d.timeReference || []).slice(0, frameCount);
+            rawFilenames = list.slice().reverse(); // oldest → newest
+            buildFrameUrls();
+            if (frames.length === 0) { info.textContent = "No radar frames available"; return; }
+            idx = frames.length - 1;
+            showFrame(frames[idx]);
+            updateLabels();
+            if (playing) startLoop();
+          } catch (e) {
+            info.textContent = "Couldn't load radar data — try the open source link.";
+          }
+        }
+
+        function scheduleNext() {
+          const atLast = idx === frames.length - 1;
+          timer = setTimeout(() => {
+            goToFrame(idx + 1);
+            scheduleNext();
+          }, atLast ? HOLD_LAST_MS : frameDelay);
+        }
+
+        function startLoop() { stopLoop(); scheduleNext(); }
+        function stopLoop() { if (timer) clearTimeout(timer); timer = null; }
+
+        function setPlaying(p) {
+          playing = p;
+          playBig.textContent = playing ? "⏸ Pause" : "▶ Play";
+          if (playing) startLoop(); else stopLoop();
+          updateLabels();
+        }
+
+        playBig.addEventListener('click', () => setPlaying(!playing));
+
+        stepBackBtn.addEventListener('click', () => {
+          setPlaying(false);
+          goToFrame(idx - 1);
+        });
+        stepFwdBtn.addEventListener('click', () => {
+          setPlaying(false);
+          goToFrame(idx + 1);
+        });
+
+        // No. of frames selector
+        document.querySelectorAll('.segbtn[data-frames]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.segbtn[data-frames]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            frameCount = parseInt(btn.dataset.frames, 10);
+            loadFrameList();
+          });
+        });
+
+        // Interval delay selector
+        document.querySelectorAll('.segbtn[data-delay]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.segbtn[data-delay]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            frameDelay = parseInt(btn.dataset.delay, 10);
+            if (playing) startLoop();
+          });
+        });
+
+        // Radar product type selector — Rain Rate source isn't confirmed to exist at
+        // this host, so if it 404s we quietly fall back to Reflectivity.
+        const radarTileTitle = document.getElementById('radarTileTitle');
+        const radarLegendBox = document.getElementById('radarLegendBox');
+
+        // Gradient layout precisely matched to the reference image
+        const templateDbz = `
+          <div class="legend-wrapper" style="font-size: 11px; height: 180px;">
+            <div class="legend-bar-center" style="width: 14px; background: linear-gradient(to top, #444444 0%, #888888 12%, #cccccc 14.5%, #00ff00 15%, #00dd00 30%, #ffff00 42%, #ff8800 58%, #ff0000 75%, #ff00ff 88%, #aa00cc 100%);"></div>
+            <!-- Left side: dBZ scale matched to exact color thresholds -->
+            <div class="legend-label left" style="bottom: 0%;">dBZ 0</div>
+            <div class="legend-label left" style="bottom: 14.5%;">15</div>
+            <div class="legend-label left" style="bottom: 40%;">30</div>
+            <div class="legend-label left" style="bottom: 64%;">45</div>
+            <div class="legend-label left" style="bottom: 85%;">60</div>
+            <div class="legend-label left" style="bottom: 100%;">65</div>
+          </div>
+        `;
+
+        const templateRr = `
+          <div class="legend-wrapper" style="font-size: 11px; height: 180px;">
+            <div class="legend-bar-center" style="width: 14px;">
+              <!-- 7 equal blocks (approx 14.3% each) -->
+              <div class="legend-block-layer" style="bottom: 0%; height: 14.3%; background: #144200;"></div>
+              <div class="legend-block-layer" style="bottom: 14.3%; height: 14.3%; background: #40DF00;"></div>
+              <div class="legend-block-layer" style="bottom: 28.6%; height: 14.3%; background: #FFFF00;"></div>
+              <div class="legend-block-layer" style="bottom: 42.9%; height: 14.3%; background: #FF8500;"></div>
+              <div class="legend-block-layer" style="bottom: 57.2%; height: 14.3%; background: #BB0000;"></div>
+              <div class="legend-block-layer" style="bottom: 71.5%; height: 14.3%; background: #800080;"></div>
+              <div class="legend-block-layer" style="bottom: 85.8%; height: 14.2%; background: #FF00FF;"></div>
+            </div>
+
+            <!-- Left side: scale borders and midpoints -->
+            <div class="legend-label left" style="bottom: 0%;">dBZ 0</div>
+            <div class="legend-label left" style="bottom: 14.3%;">15</div>
+            <div class="legend-label left" style="bottom: 35.7%;">30</div>
+            <div class="legend-label left" style="bottom: 85.8%;">40</div>
+
+            <!-- Right side: placed exactly in between the colors (on the borders) -->
+            <div class="legend-label right" style="bottom: 0%;">Radar Clutter</div>
+            <div class="legend-label right" style="bottom: 14.3%;">3 mm/hr</div>
+            <div class="legend-label right" style="bottom: 28.6%;">10</div>
+            <div class="legend-label right" style="bottom: 42.9%;">20</div>
+            <div class="legend-label right" style="bottom: 57.2%;">30</div>
+            <div class="legend-label right" style="bottom: 71.5%;">45</div>
+            <div class="legend-label right" style="bottom: 85.8%;">65</div>
+            <div class="legend-label right" style="bottom: 100%;">65+</div>
+          </div>
+        `;
+
+        function updateProductLabels() {
+          if (product === 'rr') {
+            radarTileTitle.textContent = "Live radar · Rain Rate (source: PAGASA, via GarbinWx)";
+            radarLegendBox.innerHTML = templateRr;
+          } else {
+            radarTileTitle.textContent = "Live radar · dBZ reflectivity (source: PAGASA, via GarbinWx)";
+            radarLegendBox.innerHTML = templateDbz;
+          }
+        }
+        updateProductLabels();
+
+        document.querySelectorAll('.segbtn[data-product]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.segbtn[data-product]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            product = btn.dataset.product;
+            updateProductLabels();
+            buildFrameUrls();
+            const testImg = new Image();
+            testImg.onload = () => { goToFrame(idx); };
+            testImg.onerror = () => {
+              info.textContent = "Rain Rate frames not available from source — reverted to Reflectivity.";
+              product = "dbz";
+              document.querySelectorAll('.segbtn[data-product]').forEach(b => b.classList.toggle('active', b.dataset.product === 'dbz'));
+              updateProductLabels();
+              buildFrameUrls();
+              goToFrame(idx);
+            };
+            testImg.src = frames[idx];
+          });
+        });
+
+        loadFrameList();
+        setInterval(loadFrameList, 5 * 60 * 1000);
+        setTimeout(() => map.invalidateSize(), 200);
+      } catch (err) {
+        const info = document.getElementById('radarframeinfo');
+        if (info) info.textContent = "Radar map error: " + err.message;
+        console.error("Radar map failed:", err);
+      }
+    })();
+
+    loadRain();
+    setInterval(loadRain, 10 * 60 * 1000);
+
+    const rainfallAdvisory = [
+      { cls: "lvl-adv-expect", label: "Expecting", rate: "Light to Moderate with at times Heavy Rainfall is expected in the next 2–3 hrs", action: "Rainfall is expected to affect the locality within the next 2–3 hrs. Communities should prepare early." },
+      { cls: "lvl-adv-affect", label: "Affecting", rate: "Light to Moderate with at times Heavy Rainfall which may persist within 3 hours below HR-WS threshold", action: "Rainfall currently affecting the locality, below Heavy Rainfall Warning threshold. Still light to moderate with at times heavy, but can cause inconvenience." },
+    ];
+    const ralist = document.getElementById('ralist');
+    rainfallAdvisory.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'classrow';
+      row.innerHTML = `<span class="dot" style="background:${barColor(c.cls)}"></span><div class="classtext"><span class="classname">${c.label} · ${c.rate}</span><span class="classaction">${c.action}</span></div>`;
+      ralist.appendChild(row);
+    });
+
+    const classes = [
+      { cls: "lvl-heavy", label: "Yellow · Watch", rate: "7.5–15 mm/hr", action: "Seeks community awareness. Possible flood in low-lying areas and along river channels." },
+      { cls: "lvl-intense", label: "Orange · Alert", rate: "15–30 mm/hr", action: "Seeks community preparedness. Flooding occurring in several areas; landslide risk elevated." },
+      { cls: "lvl-torrential", label: "Red · Emergency", rate: "30+ mm/hr", action: "Seeks community response. Severe widespread flooding — many roads impassable, heightened landslide risk." },
+    ];
+    const classlist = document.getElementById('classlist');
+    classes.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'classrow';
+      row.innerHTML = `<span class="dot" style="background:${barColor(c.cls)}"></span><div class="classtext"><span class="classname">${c.label} · ${c.rate}</span><span class="classaction">${c.action}</span></div>`;
+      classlist.appendChild(row);
+    });
+
+    const tsa = [
+      { cls: "lvl-expecting", label: "Expecting", rate: "next 2–3 hrs", action: "Thunderstorms expected to affect the locality. Communities should prepare early." },
+      { cls: "lvl-affecting", label: "Affecting", rate: "next 2 hrs", action: "Thunderstorms active over the locality. Take immediate precautions." },
+    ];
+    const tsalist = document.getElementById('tsalist');
+    tsa.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'classrow';
+      row.innerHTML = `<span class="dot" style="background:${barColor(c.cls)}"></span><div class="classtext"><span class="classname">${c.label} · ${c.rate}</span><span class="classaction">${c.action}</span></div>`;
+      tsalist.appendChild(row);
+    });
+  </script>
+
+</body>
+</html>

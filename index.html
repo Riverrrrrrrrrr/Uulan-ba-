@@ -36,7 +36,7 @@
       line-height: 1.5;
     }
 
-    /* Global Smooth View Transitions & Animations */
+    /* Global Transitions & Animations */
     ::view-transition-old(root),
     ::view-transition-new(root) {
       animation: none;
@@ -209,7 +209,7 @@
       color: var(--rain);
     }
 
-    /* city tiles */
+    /* City tiles */
     .tile-city {
       padding: .7rem .8rem;
       cursor: pointer;
@@ -357,7 +357,7 @@
       border-bottom: none;
     }
 
-    /* Extended Satellite Tile view */
+    /* Satellite Tile */
     .tile-sat {
       padding: 0;
       height: 600px;
@@ -376,7 +376,6 @@
       background: var(--bg);
     }
 
-    /* Optimized Satellite Control Bar */
     .satloopbar {
       display: flex;
       flex-direction: column;
@@ -422,7 +421,7 @@
     /* Unified Radar Tile */
     .tile-radar {
       padding: 0;
-      height: 810px;
+      height: 830px;
     }
 
     .tile-radar .tile-label {
@@ -606,26 +605,27 @@
       min-width: 70px;
     }
 
+    /* Enlarged Radar Legend Container */
     .radar-legend {
       position: absolute;
-      top: 8px;
-      left: 8px;
+      top: 10px;
+      left: 10px;
       z-index: 1000;
-      background: rgba(15, 21, 28, .92);
+      background: rgba(15, 21, 28, .94);
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 1.2rem .8rem;
+      padding: 1.3rem 1rem;
       display: flex;
       justify-content: center;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(5px);
     }
 
     .legend-wrapper {
       position: relative;
-      height: 200px;
-      width: 14px;
-      margin: 0 4.2rem 0 2.2rem;
+      height: 230px;
+      width: 16px;
+      margin: 0 4.8rem 0 2.8rem;
     }
 
     .legend-bar-center {
@@ -646,22 +646,22 @@
     .legend-label {
       position: absolute;
       color: var(--text);
-      font-size: .68rem;
+      font-size: .74rem;
       font-weight: 700;
       line-height: 1;
       white-space: nowrap;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
       transform: translateY(50%);
     }
 
     .legend-label.left {
       right: 100%;
-      margin-right: 8px;
+      margin-right: 10px;
     }
 
     .legend-label.right {
       left: 100%;
-      margin-left: 8px;
+      margin-left: 10px;
     }
 
     .radar-overlay-img {
@@ -740,11 +740,6 @@
       font-size: .8rem;
     }
 
-    .classrate {
-      color: var(--muted);
-      font-size: .72rem;
-    }
-
     .classaction {
       color: var(--muted);
       font-size: .72rem;
@@ -782,7 +777,7 @@
       flex: 1;
       border: 0;
       display: block;
-      min-height: 400px;
+      min-height: 480px;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -845,7 +840,7 @@
       animation: fadeInUp 0.5s ease both;
     }
 
-    /* Mobile Responsive Optimizations */
+    /* Mobile Responsive Sizing */
     @media (max-width: 900px) {
       .row-2col,
       .row-8-4,
@@ -854,7 +849,7 @@
       }
 
       .tile-radar {
-        height: 730px;
+        height: 750px;
       }
 
       .tile-sat,
@@ -862,36 +857,36 @@
         height: 480px;
       }
 
-      /* Expanded PANaHON height for mobile screens */
+      /* Expanded PANaHON view height on mobile screens */
       .tile-hrw iframe {
-        min-height: 550px;
-        height: 550px;
+        min-height: 680px;
+        height: 680px;
       }
 
       .controls-grid {
         grid-template-columns: 1fr;
       }
 
-      /* Compact Mobile Radar Legend */
+      /* Enlarged Mobile Radar Legend */
       .radar-legend {
-        padding: .5rem .4rem;
-        top: 6px;
-        left: 6px;
-        border-radius: 6px;
+        padding: .75rem .6rem;
+        top: 8px;
+        left: 8px;
+        border-radius: 8px;
       }
 
       .legend-wrapper {
-        height: 130px !important;
-        font-size: 8.5px !important;
-        margin: 0 3.2rem 0 1.8rem !important;
+        height: 170px !important;
+        font-size: 10px !important;
+        margin: 0 4.2rem 0 2.4rem !important;
       }
 
       .legend-label.left {
-        margin-right: 4px;
+        margin-right: 6px;
       }
 
       .legend-label.right {
-        margin-left: 4px;
+        margin-left: 6px;
       }
     }
   </style>
@@ -900,9 +895,9 @@
 
   <header>
     <div>
-      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.1.2</div>
+      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.1.3</div>
       <h1>Uulan Ba?</h1>
-      <p>Rain and Weather Dashboard &mdash; Open-Meteo data, PAGASA Radar and Satellite and live advisories.</p>
+      <p>Rain dashboard for major PH cities &mdash; Open-Meteo data, GarbinWx radar, PAGASA satellite and live advisories.</p>
     </div>
     <div class="header-actions">
       <button class="refresh" onclick="loadRain()">Refresh</button>
@@ -943,7 +938,7 @@
       </div>
     </div>
 
-    <!-- Unified Radar View & Integrated Controls Tile -->
+    <!-- Unified Radar View -->
     <div class="row row-1col">
       <div class="tile tile-radar">
         <div class="tile-label">
@@ -996,7 +991,6 @@
             <span class="controls-endlabel">Newest</span>
           </div>
 
-          <!-- Radar Frame Slider -->
           <div class="radar-slider-container">
             <div id="radarLiveFrame" class="controls-live" style="margin-bottom: .25rem;">Frame &mdash; / &mdash;</div>
             <input type="range" id="radarSlider" class="radar-slider" min="0" max="0" value="0">
@@ -1005,11 +999,15 @@
       </div>
     </div>
 
+    <!-- Live Hazard Map (PANaHON) -->
     <div class="row row-8-4">
       <div class="tile tile-hrw">
-        <div class="tile-label"><span>Live hazard map (PANaHON)</span><a href="https://www.panahon.gov.ph" target="_blank" rel="noopener">open &#8599;</a></div>
-        <div class="hrw-hint">Tip: inside the map, open the notification menu to pick layer warning overlays. If mobile interaction is restricted, tap "open &#8599;" above to open full screen.</div>
-        <iframe id="frame-hrw" src="https://www.panahon.gov.ph" loading="lazy"></iframe>
+        <div class="tile-label">
+          <span>Live hazard map (PANaHON)</span>
+          <a href="https://www.panahon.gov.ph" target="_blank" rel="noopener">open direct &#8599;</a>
+        </div>
+        <div class="hrw-hint">Tip: Scroll inside the map frame below to locate the top navigation and notification menu. If browser restrictions hide notifications inside embedded frames, tap "open direct &#8599;".</div>
+        <iframe id="frame-hrw" src="https://www.panahon.gov.ph" allow="geolocation; notifications; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals" loading="lazy"></iframe>
       </div>
       <div class="tile tile-criteria">
         <div class="tile-label"><span>Warning criteria (PANaHON layers)</span></div>
@@ -1480,7 +1478,7 @@
 
         const templateDbz = `
           <div class="legend-wrapper">
-            <div class="legend-bar-center" style="width: 14px; background: linear-gradient(to top, #444444 0%, #888888 12%, #cccccc 14.5%, #00ff00 15%, #00dd00 30%, #ffff00 42%, #ff8800 58%, #ff0000 75%, #ff00ff 88%, #aa00cc 100%);"></div>
+            <div class="legend-bar-center" style="width: 16px; background: linear-gradient(to top, #444444 0%, #888888 12%, #cccccc 14.5%, #00ff00 15%, #00dd00 30%, #ffff00 42%, #ff8800 58%, #ff0000 75%, #ff00ff 88%, #aa00cc 100%);"></div>
             <div class="legend-label left" style="bottom: 0%;">dBZ 0</div>
             <div class="legend-label left" style="bottom: 14.5%;">15</div>
             <div class="legend-label left" style="bottom: 40%;">30</div>
@@ -1492,7 +1490,7 @@
 
         const templateRr = `
           <div class="legend-wrapper">
-            <div class="legend-bar-center" style="width: 14px;">
+            <div class="legend-bar-center" style="width: 16px;">
               <div class="legend-block-layer" style="bottom: 0%; height: 14.3%; background: #144200;"></div>
               <div class="legend-block-layer" style="bottom: 14.3%; height: 14.3%; background: #40DF00;"></div>
               <div class="legend-block-layer" style="bottom: 28.6%; height: 14.3%; background: #FFFF00;"></div>
@@ -1505,8 +1503,8 @@
             <div class="legend-label left" style="bottom: 14.3%;">15</div>
             <div class="legend-label left" style="bottom: 35.7%;">30</div>
             <div class="legend-label left" style="bottom: 85.8%;">40</div>
-            <div class="legend-label right" style="bottom: 0%;">Radar Clutter</div>
-            <div class="legend-label right" style="bottom: 14.3%;">3 mm/hr</div>
+            <div class="legend-label right" style="bottom: 0%;">Clutter</div>
+            <div class="legend-label right" style="bottom: 14.3%;">3 mm/h</div>
             <div class="legend-label right" style="bottom: 28.6%;">10</div>
             <div class="legend-label right" style="bottom: 42.9%;">20</div>
             <div class="legend-label right" style="bottom: 57.2%;">30</div>

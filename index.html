@@ -865,7 +865,6 @@
     .tile-hrw { padding: 0; }
     .tile-hrw .tile-label { padding: .65rem .9rem .25rem; margin-bottom: 0; }
     .tile-hrw iframe { width: 100%; flex: 1; border: 0; display: block; min-height: 480px; }
-    .hrw-hint { background: #152A38; border-bottom: 1px solid var(--line); color: var(--rain); font-size: .75rem; padding: .5rem 1rem; }
     .tile-criteria { align-self: start; animation: none !important; }
 
     .linkitem {
@@ -1035,22 +1034,15 @@
       </div>
     </div>
 
-    <!-- Live Hazard Map (PANaHON) with Expanded View Feature -->
+    <!-- Live Hazard Map (PANaHON) -->
     <div class="row row-8-4">
-      <div id="panahonWrapper" class="tile tile-hrw transition-all duration-300">
-        <div class="tile-label flex items-center justify-between">
+      <div id="panahonWrapper" class="tile tile-hrw">
+        <div class="tile-label" style="display: flex; justify-content: space-between; align-items: center;">
           <span>Live hazard map (PANaHON)</span>
-          <div class="flex items-center gap-2">
-            <button onclick="togglePanahonFullscreen()" id="panahonToggleBtn" class="segbtn bg-[#152A38] text-rain border-rain font-bold flex items-center gap-1">
-              <svg id="toggleIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
-              </svg>
-              <span id="panahonToggleText">Expand Map View</span>
-            </button>
+          <div>
             <a href="https://www.panahon.gov.ph" target="_blank" rel="noopener">open direct &#8599;</a>
           </div>
         </div>
-        <div class="hrw-hint">Tip: Use Expand Map View on mobile devices to easily interact with layer drawers and navigation menus.</div>
         <iframe id="frame-hrw" src="https://www.panahon.gov.ph" allow="geolocation; notifications; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals" loading="lazy" style="width: 100%; flex: 1; border: 0; display: block; min-height: 480px;"></iframe>
       </div>
       <div class="tile tile-criteria">
@@ -1091,32 +1083,6 @@
 
   <script>
     window.leafletMap = null;
-
-    let isPanahonExpanded = false;
-    function togglePanahonFullscreen() {
-        const wrapper = document.getElementById('panahonWrapper');
-        const toggleText = document.getElementById('panahonToggleText');
-        const toggleIcon = document.getElementById('toggleIcon');
-        const iframe = document.getElementById('frame-hrw');
-        
-        isPanahonExpanded = !isPanahonExpanded;
-        
-        if (isPanahonExpanded) {
-            wrapper.classList.add('fixed', 'inset-4', 'z-[9999]', 'shadow-2xl', 'border-2', 'border-rain');
-            wrapper.style.height = 'calc(100vh - 2rem)';
-            iframe.style.minHeight = 'calc(100vh - 120px)';
-            toggleText.textContent = 'Exit Expanded View';
-            toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
-            document.body.style.overflow = 'hidden';
-        } else {
-            wrapper.classList.remove('fixed', 'inset-4', 'z-[9999]', 'shadow-2xl', 'border-2', 'border-rain');
-            wrapper.style.height = '';
-            iframe.style.minHeight = '480px';
-            toggleText.textContent = 'Expand Map View';
-            toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>';
-            document.body.style.overflow = 'auto';
-        }
-    }
 
     const defaultCities = [
       { name: "Manila", lat: 14.5995, lon: 120.9842 },

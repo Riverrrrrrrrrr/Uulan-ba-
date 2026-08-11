@@ -112,7 +112,6 @@
       }
     }
 
-    /* Aesthetic Search Component */
     .search-wrapper {
       position: relative;
       min-width: 240px;
@@ -365,7 +364,6 @@
       color: var(--rain);
     }
 
-    /* City tiles */
     .tile-city {
       padding: .75rem .85rem;
       cursor: pointer;
@@ -561,7 +559,6 @@
       border-bottom: 1px solid var(--line);
     }
 
-    /* Satellite Tile */
     .tile-sat {
       padding: 0;
       height: 520px;
@@ -622,7 +619,6 @@
       touch-action: manipulation;
     }
 
-    /* Radar Tile & Embedded Controls */
     .tile-radar {
       padding: 0;
       height: clamp(480px, 80vh, 640px);
@@ -861,7 +857,6 @@
     .livedot.down { background: #D6524E; }
     .livedot.checking { background: #8FA1B0; }
 
-    /* Advisory Tile */
     .tile-advisory {
       padding: 0;
       height: 520px;
@@ -929,7 +924,6 @@
     .tile-hrw .tile-label { padding: .65rem .9rem .25rem; margin-bottom: 0; }
     .tile-criteria { align-self: start; animation: none !important; }
 
-    /* Patch Notes / Changelog styling */
     .changelog-content {
       font-size: 0.78rem;
       color: var(--muted);
@@ -1000,7 +994,6 @@
       margin: 0 auto;
     }
 
-    /* Mobile Responsive Optimizations (v2.4.2) */
     @media (max-width: 900px) {
       header { padding: 1rem 1.1rem .8rem; }
       main { padding: 0.9rem 1.1rem 2.5rem; }
@@ -1025,7 +1018,6 @@
       <p>Philippines Weather and Rain Dashboard.</p>
     </div>
     <div class="header-actions">
-      <!-- Aesthetic Search Input Component -->
       <div class="search-wrapper">
         <div class="search-input-container">
           <input type="text" id="citySearchInput" class="search-input" placeholder="Search city or town..." autocomplete="off" />
@@ -1044,10 +1036,8 @@
   <main>
     <p class="status" id="status">Loading rainfall data&hellip;</p>
 
-    <!-- Search Location Preview Container -->
     <div id="search-preview-slot" class="search-preview-slot"></div>
 
-    <!-- Active City Tiles Grid -->
     <div class="row row-cities" id="citygrid-slot"></div>
 
     <div class="row row-2col">
@@ -1070,7 +1060,6 @@
         </div>
       </div>
 
-      <!-- Mobile-Robust Advisory PDF Container -->
       <div class="tile tile-advisory">
         <div class="tile-label">
           <span>PAGASA weather advisory (live)</span>
@@ -1083,7 +1072,6 @@
       </div>
     </div>
 
-    <!-- Interactive Radar View -->
     <div class="row row-1col">
       <div class="tile tile-radar">
         <div class="tile-label">
@@ -1150,7 +1138,6 @@
       </div>
     </div>
 
-    <!-- Live Hazard Map & Criteria Section -->
     <div class="row row-8-4">
       <div id="panahonWrapper" class="tile tile-hrw">
         <div class="tile-label" style="display: flex; justify-content: space-between; align-items: center;">
@@ -1177,7 +1164,6 @@
       </div>
     </div>
 
-    <!-- Patch Notes Section -->
     <div class="row row-1col">
       <div class="tile">
         <div class="tile-label" style="display: flex; justify-content: space-between; align-items: center;">
@@ -1221,6 +1207,13 @@
           </div>
 
           <div class="version-block">
+            <div class="version-tag">v2.3.1 — Control & Interface Optimizations</div>
+            <ul class="version-list">
+              <li><strong>Control Fine-Tuning:</strong> Streamlined and optimized user controls across the radar timeline playback, satellite loop scrubber, and dashboard navigation buttons.</li>
+            </ul>
+          </div>
+
+          <div class="version-block">
             <div class="version-tag">v2.3.0 — Interactive Cards & Custom City Management</div>
             <ul class="version-list">
               <li><strong>Expandable City Cards:</strong> Added animated card expansion powered by the View Transitions API.</li>
@@ -1249,7 +1242,6 @@
       </div>
     </div>
 
-    <!-- Links row -->
     <div class="row row-3col">
       <div class="linkitem">
         <span class="tag">PAGASA</span>

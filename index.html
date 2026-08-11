@@ -36,7 +36,6 @@
       line-height: 1.5;
     }
 
-    /* Global Transitions & Animations */
     ::view-transition-old(root),
     ::view-transition-new(root) {
       animation: none;
@@ -60,7 +59,7 @@
     }
 
     header {
-      padding: 1.4rem 1.5rem 1.1rem;
+      padding: 1.2rem 1.5rem .9rem;
       border-bottom: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
@@ -179,11 +178,6 @@
       border-color: rgba(79, 163, 209, 0.4);
     }
 
-    .row > .tile:nth-child(1) { animation-delay: 0.05s; }
-    .row > .tile:nth-child(2) { animation-delay: 0.1s; }
-    .row > .tile:nth-child(3) { animation-delay: 0.15s; }
-    .row > .tile:nth-child(4) { animation-delay: 0.2s; }
-
     .tile-label {
       font-size: .66rem;
       text-transform: uppercase;
@@ -219,10 +213,6 @@
       border-color: var(--rain);
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-    }
-
-    .tile-city:active {
-      transform: scale(0.98) translateY(0);
     }
 
     .tile-city.expanded {
@@ -290,7 +280,7 @@
     .city-details {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.4s cubic-bezier(0.2, 0, 0, 1), margin-top 0.4s cubic-bezier(0.2, 0, 0, 1), padding-top 0.4s cubic-bezier(0.2, 0, 0, 1), border-top-color 0.4s ease;
+      transition: max-height 0.4s cubic-bezier(0.2, 0, 0, 1), margin-top 0.4s cubic-bezier(0.2, 0, 0, 1), padding-top 0.4s cubic-bezier(0.2, 0, 0, 1);
       margin-top: 0;
       padding-top: 0;
       border-top: 1px solid transparent;
@@ -305,11 +295,6 @@
       border-top-color: var(--line);
     }
 
-    .city-details-inner {
-      min-height: 0;
-      animation: fadeInUp 0.3s ease both;
-    }
-
     .uulan-verdict {
       background: var(--panel);
       border-left: 3px solid var(--rain);
@@ -319,7 +304,6 @@
       font-weight: 600;
       margin-bottom: .8rem;
       color: var(--text);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     .hourly-title {
@@ -343,54 +327,52 @@
       align-items: center;
       padding: .25rem 0;
       border-bottom: 1px solid var(--line);
-      transition: background-color 0.2s ease;
-    }
-
-    .hourly-row:hover {
-      background: rgba(255, 255, 255, 0.02);
-      padding-left: .25rem;
-      padding-right: .25rem;
-      border-radius: 4px;
-    }
-
-    .hourly-row:last-child {
-      border-bottom: none;
     }
 
     /* Satellite Tile */
     .tile-sat {
       padding: 0;
-      height: 600px;
+      height: 520px;
       position: relative;
     }
 
     .tile-sat .tile-label {
-      padding: .75rem 1rem .3rem;
+      padding: .65rem .9rem .25rem;
       margin-bottom: 0;
     }
 
     .tile-sat img {
       width: 100%;
       flex: 1;
-      object-fit: cover;
+      object-fit: contain;
       background: var(--bg);
+      min-height: 0;
     }
 
     .satloopbar {
       display: flex;
       flex-direction: column;
-      gap: .35rem;
-      padding: .6rem .8rem;
+      gap: .4rem;
+      padding: .6rem .85rem .85rem;
       border-top: 1px solid var(--line);
       font-size: .7rem;
       color: var(--muted);
       background: var(--panel2);
+      border-bottom-left-radius: 11px;
+      border-bottom-right-radius: 11px;
     }
 
     .sat-controls-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    .sat-slider-container {
+      width: 100%;
+      padding: .2rem 0 .15rem;
+      display: flex;
+      align-items: center;
     }
 
     .satplay {
@@ -405,40 +387,36 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0;
-      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
     }
 
-    .satplay:hover {
-      border-color: var(--rain);
-      transform: scale(1.08);
-    }
-
-    .satplay:active {
-      transform: scale(0.92);
-    }
-
-    /* Unified Radar Tile */
+    /* Radar Tile & Compact Embedded Controls */
     .tile-radar {
       padding: 0;
-      height: 830px;
+      height: clamp(480px, 80vh, 640px);
+      display: flex;
+      flex-direction: column;
     }
 
     .tile-radar .tile-label {
-      padding: .75rem 1rem .3rem;
+      padding: .6rem .9rem .3rem;
       margin-bottom: 0;
+      flex-shrink: 0;
     }
 
     .tile-radar #radarmap {
       width: 100%;
       flex: 1;
+      min-height: 0;
     }
 
     .radar-controls-embedded {
-      padding: .6rem 1rem;
+      padding: .5rem .85rem .65rem;
       border-top: 1px solid var(--line);
       background: var(--panel2);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      flex-shrink: 0;
+      border-bottom-left-radius: 11px;
+      border-bottom-right-radius: 11px;
     }
 
     .controls-top-row {
@@ -451,7 +429,7 @@
     }
 
     .controls-time {
-      font-size: .85rem;
+      font-size: .82rem;
       font-weight: 700;
       color: var(--text);
     }
@@ -459,16 +437,17 @@
     .controls-live {
       color: var(--rain);
       font-weight: 700;
-      font-size: .72rem;
+      font-size: .7rem;
     }
 
     .radar-slider-container {
-      margin-top: .5rem;
+      margin-top: .4rem;
+      padding: .15rem 0;
     }
 
     .radar-slider {
       width: 100%;
-      height: 6px;
+      height: 5px;
       background: var(--line);
       border-radius: 3px;
       outline: none;
@@ -479,31 +458,17 @@
 
     .radar-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       border-radius: 50%;
       background: var(--rain);
       cursor: pointer;
-      transition: transform 0.1s ease;
-    }
-
-    .radar-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.25);
-    }
-
-    .radar-slider::-moz-range-thumb {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--rain);
-      cursor: pointer;
-      border: none;
     }
 
     .controls-grid {
       display: grid;
-      grid-template-columns: 1.6fr 1fr 1fr;
-      gap: .6rem;
+      grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+      gap: .5rem;
       align-items: flex-start;
       margin-bottom: .4rem;
     }
@@ -511,22 +476,21 @@
     .controls-group {
       display: flex;
       flex-direction: column;
-      gap: .3rem;
+      gap: .25rem;
     }
 
     .controls-groupname {
       display: block;
-      font-size: .66rem;
+      font-size: .6rem;
       text-transform: uppercase;
       letter-spacing: .06em;
       color: var(--muted);
       font-weight: 700;
-      margin-bottom: 0;
     }
 
     .segbtns {
       display: flex;
-      gap: .25rem;
+      gap: .2rem;
       flex-wrap: wrap;
     }
 
@@ -534,23 +498,17 @@
       background: var(--panel);
       border: 1px solid var(--line);
       color: var(--muted);
-      font-size: .68rem;
+      font-size: .65rem;
       font-weight: 700;
       padding: .2rem .45rem;
       border-radius: 4px;
       cursor: pointer;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
     }
 
     .segbtn:hover {
       border-color: var(--rain);
       color: var(--text);
-      transform: translateY(-1px);
-    }
-
-    .segbtn:active {
-      transform: scale(0.95) translateY(0);
     }
 
     .segbtn.active {
@@ -569,7 +527,7 @@
     }
 
     .controls-endlabel {
-      font-size: .62rem;
+      font-size: .6rem;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: .05em;
@@ -580,22 +538,17 @@
       background: var(--panel);
       border: 1px solid var(--line);
       color: var(--text);
-      font-size: .68rem;
+      font-size: .65rem;
       font-weight: 700;
-      padding: .3rem .65rem;
+      padding: .25rem .55rem;
       border-radius: 4px;
       cursor: pointer;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
     }
 
     .transportbtn:hover {
       border-color: var(--rain);
       transform: translateY(-1px);
-    }
-
-    .transportbtn:active {
-      transform: scale(0.95) translateY(0);
     }
 
     .transportbtn.play {
@@ -605,16 +558,16 @@
       min-width: 70px;
     }
 
-    /* Enlarged Radar Legend Container */
+    /* Radar Legend Container */
     .radar-legend {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 8px;
+      left: 8px;
       z-index: 1000;
-      background: rgba(15, 21, 28, .94);
+      background: rgba(15, 21, 28, .92);
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 1.3rem 1rem;
+      padding: .8rem .7rem;
       display: flex;
       justify-content: center;
       box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
@@ -623,30 +576,26 @@
 
     .legend-wrapper {
       position: relative;
-      height: 230px;
-      width: 16px;
-      margin: 0 4.8rem 0 2.8rem;
+      height: 180px;
+      width: 14px;
+      margin: 0 4.2rem 0 2.4rem;
     }
 
     .legend-bar-center {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       border: 1px solid #fff;
     }
 
     .legend-block-layer {
       position: absolute;
-      left: 0;
-      right: 0;
+      left: 0; right: 0;
     }
 
     .legend-label {
       position: absolute;
       color: var(--text);
-      font-size: .74rem;
+      font-size: .68rem;
       font-weight: 700;
       line-height: 1;
       white-space: nowrap;
@@ -654,19 +603,11 @@
       transform: translateY(50%);
     }
 
-    .legend-label.left {
-      right: 100%;
-      margin-right: 10px;
-    }
-
-    .legend-label.right {
-      left: 100%;
-      margin-left: 10px;
-    }
+    .legend-label.left { right: 100%; margin-right: 8px; }
+    .legend-label.right { left: 100%; margin-left: 8px; }
 
     .radar-overlay-img {
       image-rendering: pixelated;
-      image-rendering: -moz-crisp-edges;
       image-rendering: crisp-edges;
     }
 
@@ -681,33 +622,38 @@
       background: #5EAE6A;
       display: inline-block;
       margin-right: 5px;
-      transition: background .3s;
     }
 
-    .livedot.down {
-      background: #D6524E;
-    }
+    .livedot.down { background: #D6524E; }
+    .livedot.checking { background: #8FA1B0; }
 
-    .livedot.checking {
-      background: #8FA1B0;
-    }
-
+    /* Advisory Tile */
     .tile-advisory {
       padding: 0;
-      height: 600px;
+      height: 520px;
+      display: flex;
+      flex-direction: column;
     }
 
     .tile-advisory .tile-label {
-      padding: .75rem 1rem .3rem;
+      padding: .65rem .9rem .25rem;
       margin-bottom: 0;
+      flex-shrink: 0;
     }
 
-    .tile-advisory iframe {
+    #pagasa-pdf-container {
       width: 100%;
       flex: 1;
-      border: 0;
+      background: #525659;
+      min-height: 0;
+    }
+
+    #pagasa-pdf-container iframe,
+    #pagasa-pdf-container embed {
+      width: 100%;
+      height: 100%;
+      border: none;
       display: block;
-      -webkit-overflow-scrolling: touch;
     }
 
     .classrow {
@@ -718,10 +664,6 @@
       border-bottom: 1px solid var(--line);
     }
 
-    .classrow:last-child {
-      border-bottom: none;
-    }
-
     .dot {
       width: 9px;
       height: 9px;
@@ -730,21 +672,9 @@
       margin-top: .3rem;
     }
 
-    .classtext {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .classname {
-      font-weight: 600;
-      font-size: .8rem;
-    }
-
-    .classaction {
-      color: var(--muted);
-      font-size: .72rem;
-      margin-top: .1rem;
-    }
+    .classtext { display: flex; flex-direction: column; }
+    .classname { font-weight: 600; font-size: .8rem; }
+    .classaction { color: var(--muted); font-size: .72rem; margin-top: .1rem; }
 
     .classsection {
       font-size: .66rem;
@@ -757,42 +687,13 @@
       border-top: 1px solid var(--line);
     }
 
-    .classsection-first {
-      margin-top: 0;
-      padding-top: 0;
-      border-top: none;
-    }
+    .classsection-first { margin-top: 0; padding-top: 0; border-top: none; }
 
-    .tile-hrw {
-      padding: 0;
-    }
-
-    .tile-hrw .tile-label {
-      padding: .75rem 1rem .3rem;
-      margin-bottom: 0;
-    }
-
-    .tile-hrw iframe {
-      width: 100%;
-      flex: 1;
-      border: 0;
-      display: block;
-      min-height: 480px;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .hrw-hint {
-      background: #152A38;
-      border-bottom: 1px solid var(--line);
-      color: var(--rain);
-      font-size: .75rem;
-      padding: .5rem 1rem;
-    }
-
-    .tile-criteria {
-      align-self: start;
-      animation: none !important;
-    }
+    .tile-hrw { padding: 0; }
+    .tile-hrw .tile-label { padding: .65rem .9rem .25rem; margin-bottom: 0; }
+    .tile-hrw iframe { width: 100%; flex: 1; border: 0; display: block; min-height: 480px; }
+    .hrw-hint { background: #152A38; border-bottom: 1px solid var(--line); color: var(--rain); font-size: .75rem; padding: .5rem 1rem; }
+    .tile-criteria { align-self: start; animation: none !important; }
 
     .linkitem {
       background: var(--panel2);
@@ -800,34 +701,11 @@
       border-radius: 8px;
       padding: .7rem .85rem;
       font-size: .78rem;
-      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
-    .linkitem:hover {
-      transform: translateY(-2px);
-      border-color: var(--rain);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-    }
-
-    .linkitem a {
-      color: var(--rain);
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-
-    .linkitem a:hover {
-      text-decoration: underline;
-    }
-
-    .linkitem .tag {
-      display: block;
-      font-size: .63rem;
-      font-weight: 700;
-      color: var(--amber);
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      margin-bottom: .25rem;
-    }
+    .linkitem a { color: var(--rain); text-decoration: none; }
+    .linkitem a:hover { text-decoration: underline; }
+    .linkitem .tag { display: block; font-size: .63rem; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .25rem; }
 
     footer {
       text-align: center;
@@ -837,57 +715,16 @@
       border-top: 1px solid var(--line);
       max-width: 1280px;
       margin: 0 auto;
-      animation: fadeInUp 0.5s ease both;
     }
 
-    /* Mobile Responsive Sizing */
     @media (max-width: 900px) {
-      .row-2col,
-      .row-8-4,
-      .row-3col {
-        grid-template-columns: 1fr;
-      }
-
-      .tile-radar {
-        height: 750px;
-      }
-
-      .tile-sat,
-      .tile-advisory {
-        height: 480px;
-      }
-
-      /* Expanded PANaHON view height on mobile screens */
-      .tile-hrw iframe {
-        min-height: 680px;
-        height: 680px;
-      }
-
-      .controls-grid {
-        grid-template-columns: 1fr;
-      }
-
-      /* Enlarged Mobile Radar Legend */
-      .radar-legend {
-        padding: .75rem .6rem;
-        top: 8px;
-        left: 8px;
-        border-radius: 8px;
-      }
-
-      .legend-wrapper {
-        height: 170px !important;
-        font-size: 10px !important;
-        margin: 0 4.2rem 0 2.4rem !important;
-      }
-
-      .legend-label.left {
-        margin-right: 6px;
-      }
-
-      .legend-label.right {
-        margin-left: 6px;
-      }
+      .row-2col, .row-8-4, .row-3col { grid-template-columns: 1fr; }
+      .tile-radar { height: clamp(440px, 75vh, 580px); }
+      .tile-sat, .tile-advisory { height: 460px; }
+      .tile-hrw iframe { min-height: 600px; height: 600px; }
+      .controls-grid { grid-template-columns: 1fr 1fr; }
+      .radar-legend { padding: .6rem .5rem; top: 6px; left: 6px; }
+      .legend-wrapper { height: 140px !important; font-size: 9px !important; margin: 0 3.8rem 0 2rem !important; }
     }
   </style>
 </head>
@@ -895,9 +732,9 @@
 
   <header>
     <div>
-      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.1.3</div>
+      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.3.1</div>
       <h1>Uulan Ba?</h1>
-      <p>Rain dashboard for major PH cities &mdash; Open-Meteo data, GarbinWx radar, PAGASA satellite and live advisories.</p>
+      <p>Philippines Weather and Rain Dashboard.</p>
     </div>
     <div class="header-actions">
       <button class="refresh" onclick="loadRain()">Refresh</button>
@@ -923,7 +760,9 @@
             <button class="satplay" id="satplaybtn" title="Play/pause loop">&#10074;&#10074;</button>
             <div id="satFrameCounter" class="controls-live">Frame -- / --</div>
           </div>
-          <input type="range" id="satSlider" class="radar-slider" min="0" max="0" value="0">
+          <div class="sat-slider-container">
+            <input type="range" id="satSlider" class="radar-slider" min="0" max="0" value="0">
+          </div>
         </div>
       </div>
       <div class="tile tile-advisory">
@@ -934,35 +773,37 @@
             <a href="https://www.pagasa.dost.gov.ph/weather/weather-advisory" target="_blank" rel="noopener">site &#8599;</a>
           </div>
         </div>
-        <iframe id="frame-advisory" src="https://docs.google.com/gview?url=https://pubfiles.pagasa.dost.gov.ph/tamss/weather/advisory.pdf&embedded=true" loading="lazy"></iframe>
+        <div id="pagasa-pdf-container"></div>
       </div>
     </div>
 
-    <!-- Unified Radar View -->
+    <!-- Interactive Radar View -->
     <div class="row row-1col">
       <div class="tile tile-radar">
         <div class="tile-label">
           <span id="radarTileTitle"><span class="livedot" id="dot-radar" title="Connection status"></span>Live radar &middot; dBZ reflectivity (source: PAGASA, processed HERE)</span>
+          <div>
+            <button id="radarRecenter" class="segbtn" title="Recenter map to PH">Recenter Map</button>
+          </div>
         </div>
         
         <div id="radarmap" style="position:relative;">
-          <div class="radar-legend" id="radarLegendBox">
-            <!-- Injected by JS -->
-          </div>
+          <div class="radar-legend" id="radarLegendBox"></div>
         </div>
 
-        <!-- Integrated Controls Panel -->
+        <!-- Integrated Radar Control Suite -->
         <div class="radar-controls-embedded">
           <div class="controls-top-row">
             <div class="controls-time" id="radarFrameTime">&mdash;</div>
+            <div id="radarLiveFrame" class="controls-live">Frame &mdash; / &mdash;</div>
           </div>
 
           <div class="controls-grid">
             <div class="controls-group">
-              <span class="controls-groupname">Radar product type</span>
+              <span class="controls-groupname">Product</span>
               <div class="segbtns">
                 <button class="segbtn active" data-product="dbz">Reflectivity (dBZ)</button>
-                <button class="segbtn" data-product="rr">Rain Rate (mm/hr)</button>
+                <button class="segbtn" data-product="rr">Rain Rate (mm/h)</button>
               </div>
             </div>
             <div class="controls-group">
@@ -974,25 +815,30 @@
               </div>
             </div>
             <div class="controls-group">
-              <span class="controls-groupname">Delay</span>
+              <span class="controls-groupname">Speed</span>
               <div class="segbtns">
-                <button class="segbtn" data-delay="250">250ms</button>
-                <button class="segbtn active" data-delay="450">450ms</button>
-                <button class="segbtn" data-delay="700">700ms</button>
+                <button class="segbtn" data-delay="250">Fast</button>
+                <button class="segbtn active" data-delay="450">Normal</button>
+                <button class="segbtn" data-delay="700">Slow</button>
+              </div>
+            </div>
+            <div class="controls-group">
+              <span class="controls-groupname">Opacity</span>
+              <div style="display: flex; align-items: center; gap: .5rem; height: 100%;">
+                <input type="range" id="radarOpacity" class="radar-slider" min="0.2" max="1.0" step="0.05" value="0.75">
               </div>
             </div>
           </div>
 
           <div class="controls-transport">
             <span class="controls-endlabel">Oldest</span>
-            <button id="radarStepBack" class="transportbtn" title="Step back">&lsaquo; Step</button>
-            <button id="radarPlayBig" class="transportbtn play" title="Play/pause">&#9654; Play</button>
-            <button id="radarStepFwd" class="transportbtn" title="Step forward">Step &rsaquo;</button>
+            <button id="radarStepBack" class="transportbtn" title="Step back (&larr;)">&lsaquo; Step</button>
+            <button id="radarPlayBig" class="transportbtn play" title="Play/Pause (Space)">&#9654; Play</button>
+            <button id="radarStepFwd" class="transportbtn" title="Step forward (&rsaquo;)">Step &rsaquo;</button>
             <span class="controls-endlabel">Newest</span>
           </div>
 
           <div class="radar-slider-container">
-            <div id="radarLiveFrame" class="controls-live" style="margin-bottom: .25rem;">Frame &mdash; / &mdash;</div>
             <input type="range" id="radarSlider" class="radar-slider" min="0" max="0" value="0">
           </div>
         </div>
@@ -1006,7 +852,7 @@
           <span>Live hazard map (PANaHON)</span>
           <a href="https://www.panahon.gov.ph" target="_blank" rel="noopener">open direct &#8599;</a>
         </div>
-        <div class="hrw-hint">Tip: Scroll inside the map frame below to locate the top navigation and notification menu. If browser restrictions hide notifications inside embedded frames, tap "open direct &#8599;".</div>
+        <div class="hrw-hint">Tip: Scroll inside the map frame below to locate the top navigation and notification menu.</div>
         <iframe id="frame-hrw" src="https://www.panahon.gov.ph" allow="geolocation; notifications; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals" loading="lazy"></iframe>
       </div>
       <div class="tile tile-criteria">
@@ -1042,7 +888,7 @@
 
   <footer>
     River<br>
-    Data: Open-Meteo (rainfall) &middot; GarbinWx (radar) &middot; PAGASA (satellite + advisory + regional warnings). Built for quick personal reference.
+    Built for quick personal reference.
   </footer>
 
   <script>
@@ -1059,7 +905,7 @@
     ];
 
     function classify(mmhr) {
-      if (mmhr < 7.5) return { label: "Advisory", cls: "lvl-adv-affect" };
+      if (mmhr < 7.5) return { label: "Advisory", cls: "lvl-adv-affecting" };
       if (mmhr < 15) return { label: "Yellow", cls: "lvl-heavy" };
       if (mmhr < 30) return { label: "Orange", cls: "lvl-intense" };
       return { label: "Red", cls: "lvl-torrential" };
@@ -1068,7 +914,8 @@
     function barColor(cls) {
       const map = {
         "lvl-none": "#2C3F4D",
-        "lvl-adv-affect": "#4FA3D1",
+        "lvl-adv-expecting": "#5DADE2",
+        "lvl-adv-affecting": "#1B4F72",
         "lvl-heavy": "#F0C419",
         "lvl-intense": "#E07A2E",
         "lvl-torrential": "#D6524E",
@@ -1091,23 +938,47 @@
       const status = document.getElementById('status');
       status.textContent = "Loading rainfall data…";
       slot.innerHTML = "";
-      try {
-        const results = await Promise.all(cities.map(async c => {
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=precipitation,rain,temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation&timezone=Asia%2FManila`;
-          const r = await fetch(url);
-          const d = await r.json();
-          return { name: c.name, precip: d.current?.precipitation ?? 0, temp: d.current?.temperature_2m, hourly: d.hourly };
-        }));
 
-        results.forEach((res, index) => {
+      try {
+        const lats = cities.map(c => c.lat).join(',');
+        const lons = cities.map(c => c.lon).join(',');
+
+        const batchUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&models=ecmwf_ifs025&current=precipitation,rain,temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation&timezone=Asia%2FManila`;
+        
+        const response = await fetch(batchUrl);
+        if (!response.ok) throw new Error("Network error fetching weather data");
+        
+        const data = await response.json();
+        const resultsArray = Array.isArray(data) ? data : [data];
+
+        const cityDataList = cities.map((c, i) => {
+          const res = resultsArray[i];
+          const precip = res?.current?.precipitation ?? res?.current?.rain ?? 0;
+          const temp = res?.current?.temperature_2m;
+          const hourly = res?.hourly;
+
+          let maxProb = 0;
+          if (hourly && hourly.time) {
+            const nowIdx = hourly.time.findIndex(t => new Date(t) >= new Date());
+            const startIdx = nowIdx !== -1 ? nowIdx : 0;
+            for (let k = startIdx; k < Math.min(startIdx + 5, hourly.time.length); k++) {
+              const prob = hourly.precipitation_probability ? hourly.precipitation_probability[k] : 0;
+              if (prob > maxProb) maxProb = prob;
+            }
+          }
+
+          return { name: c.name, precip, temp, hourly, maxProb };
+        });
+
+        cityDataList.sort((a, b) => b.precip - a.precip || b.maxProb - a.maxProb || a.name.localeCompare(b.name));
+
+        cityDataList.forEach((res, index) => {
           const info = classify(res.precip);
           const tile = document.createElement('div');
           tile.className = 'tile tile-city';
           tile.style.animationDelay = `${0.04 * (index + 1)}s`;
 
           let hourlyHtml = '';
-          let maxProb = 0;
-
           if (res.hourly && res.hourly.time) {
             const nowIdx = res.hourly.time.findIndex(t => new Date(t) >= new Date());
             const startIdx = nowIdx !== -1 ? nowIdx : 0;
@@ -1116,7 +987,6 @@
               const timeStr = new Date(res.hourly.time[i]).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true });
               const tempVal = res.hourly.temperature_2m[i];
               const probVal = res.hourly.precipitation_probability ? res.hourly.precipitation_probability[i] : 0;
-              if (probVal > maxProb) maxProb = probVal;
               rows += `
                 <div class="hourly-row">
                   <span style="font-weight: 600;">${timeStr}</span>
@@ -1125,7 +995,7 @@
                 </div>
               `;
             }
-            const verdictText = getUulanBaVerdict(maxProb, res.precip);
+            const verdictText = getUulanBaVerdict(res.maxProb, res.precip);
             hourlyHtml = `
               <div class="city-details">
                 <div class="city-details-inner">
@@ -1148,12 +1018,10 @@
           tile.addEventListener('click', () => {
             const updateState = () => {
               const isExpanded = tile.classList.contains('expanded');
-              
               document.querySelectorAll('.tile-city').forEach(t => {
                 t.classList.remove('expanded');
                 t.style.viewTransitionName = 'none';
               });
-
               if (!isExpanded) {
                 tile.classList.add('expanded');
                 tile.style.viewTransitionName = 'active-card';
@@ -1162,9 +1030,7 @@
 
             if (document.startViewTransition) {
               const transition = document.startViewTransition(() => updateState());
-              transition.finished.then(() => {
-                tile.style.viewTransitionName = 'none';
-              });
+              transition.finished.then(() => { tile.style.viewTransitionName = 'none'; });
             } else {
               updateState();
             }
@@ -1174,12 +1040,14 @@
         });
 
         const now = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
-        status.textContent = `Updated ${now} (Manila time) · source: Open-Meteo`;
+        status.textContent = `Updated ${now} (Manila time) · source: Open-Meteo (ECMWF IFS Batched)`;
       } catch (e) {
+        console.error("Rain data fetch error:", e);
         status.textContent = "Couldn't load live data right now — try refresh.";
       }
     }
 
+    /* Satellite Image Loop Logic */
     (function() {
       const img = document.getElementById('satimg');
       const dot = document.getElementById('dot-sat');
@@ -1220,24 +1088,14 @@
         if (frames.length <= 1) {
           playBtn.style.display = "none";
           if (frames.length === 1) img.src = frames[0];
-          if (satSlider) {
-            satSlider.max = Math.max(0, frames.length - 1);
-            satSlider.value = 0;
-          }
-          if (satFrameCounter) {
-            satFrameCounter.textContent = `Frame ${frames.length > 0 ? 1 : 0} / ${frames.length}`;
-          }
+          if (satSlider) { satSlider.max = Math.max(0, frames.length - 1); satSlider.value = 0; }
+          if (satFrameCounter) { satFrameCounter.textContent = `Frame ${frames.length > 0 ? 1 : 0} / ${frames.length}`; }
           return;
         }
         playBtn.style.display = "flex";
         idx = frames.length - 1;
-        if (satSlider) {
-          satSlider.max = frames.length - 1;
-          satSlider.value = idx;
-        }
-        if (satFrameCounter) {
-          satFrameCounter.textContent = `Frame ${idx + 1} / ${frames.length}`;
-        }
+        if (satSlider) { satSlider.max = frames.length - 1; satSlider.value = idx; }
+        if (satFrameCounter) { satFrameCounter.textContent = `Frame ${idx + 1} / ${frames.length}`; }
         if (playing) startLoop();
       }
 
@@ -1246,19 +1104,13 @@
         idx = ((i % frames.length) + frames.length) % frames.length;
         img.src = frames[idx];
         if (satSlider && !isDraggingSat) satSlider.value = idx;
-        if (satFrameCounter) {
-          satFrameCounter.textContent = `Frame ${idx + 1} / ${frames.length}`;
-        }
+        if (satFrameCounter) satFrameCounter.textContent = `Frame ${idx + 1} / ${frames.length}`;
       }
 
       const FRAME_MS = 400;
       const HOLD_LAST_MS = 2500;
 
-      function startLoop() {
-        stopLoop();
-        scheduleNext();
-      }
-
+      function startLoop() { stopLoop(); scheduleNext(); }
       function scheduleNext() {
         const atLast = idx === frames.length - 1;
         timer = setTimeout(() => {
@@ -1267,10 +1119,7 @@
         }, atLast ? HOLD_LAST_MS : FRAME_MS);
       }
 
-      function stopLoop() {
-        if (timer) clearTimeout(timer);
-        timer = null;
-      }
+      function stopLoop() { if (timer) clearTimeout(timer); timer = null; }
 
       playBtn.addEventListener('click', () => {
         playing = !playing;
@@ -1296,6 +1145,36 @@
       setInterval(discoverFrames, 5 * 60 * 1000);
     })();
 
+    /* PAGASA PDF Viewer Initializer (Responsive Desktop / Mobile Engine) */
+    (function initPagasaPdfViewer() {
+      const pdfUrl = 'https://pubfiles.pagasa.dost.gov.ph/tamss/weather/advisory.pdf';
+      const container = document.getElementById('pagasa-pdf-container');
+      if (!container) return;
+      
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        // Mobile: Use Microsoft Web Viewer engine to prevent forced file downloads
+        container.innerHTML = `
+          <iframe 
+            src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(pdfUrl)}" 
+            width="100%" 
+            height="100%" 
+            frameborder="0" 
+            loading="lazy">
+          </iframe>`;
+      } else {
+        // Desktop: Clean native embedded view with toolbars hidden
+        container.innerHTML = `
+          <embed 
+            src="${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0" 
+            type="application/pdf" 
+            width="100%" 
+            height="100%">`;
+      }
+    })();
+
+    /* Interactive Radar Map JS */
     (function() {
       try {
         const DATA_BASE = "https://data.garbinwx.org";
@@ -1318,10 +1197,12 @@
           zoomDelta: 0.5,
           scrollWheelZoom: true
         }).setView([12.6, 121.8], 6);
+        
         L.control.zoom({ position: 'topright' }).addTo(map);
         L.tileLayer(TILE_URL, { maxZoom: 22, maxNativeZoom: 19, className: 'basemap-contrast' }).addTo(map);
 
         let overlay = null;
+        let opacityVal = 0.75;
 
         function boundsToLatLngBounds() {
           return [[bounds.south, bounds.west], [bounds.north, bounds.east]];
@@ -1330,8 +1211,9 @@
         function showFrame(url) {
           if (overlay) {
             overlay.setUrl(url);
+            overlay.setOpacity(opacityVal);
           } else {
-            overlay = L.imageOverlay(url, boundsToLatLngBounds(), { opacity: 0.75, className: 'radar-overlay-img' }).addTo(map);
+            overlay = L.imageOverlay(url, boundsToLatLngBounds(), { opacity: opacityVal, className: 'radar-overlay-img' }).addTo(map);
           }
         }
 
@@ -1341,6 +1223,8 @@
         const stepBackBtn = document.getElementById('radarStepBack');
         const stepFwdBtn = document.getElementById('radarStepFwd');
         const radarSlider = document.getElementById('radarSlider');
+        const opacitySlider = document.getElementById('radarOpacity');
+        const recenterBtn = document.getElementById('radarRecenter');
 
         let rawFilenames = [];
         let frames = [];
@@ -1358,6 +1242,7 @@
         function buildFrameUrls() {
           const prefix = productPrefix(product);
           frames = rawFilenames.map(f => DATA_BASE + "/raw/" + prefix + "-" + f);
+          frames.forEach(src => { const img = new Image(); img.src = src; });
         }
 
         function formatFrameTime(filename) {
@@ -1394,25 +1279,17 @@
             buildFrameUrls();
             if (frames.length === 0) {
               liveFrameLabel.textContent = "Frame — / —";
-              if (radarDot) {
-                radarDot.classList.remove('checking');
-                radarDot.classList.add('down');
-              }
+              if (radarDot) radarDot.className = "livedot down";
               return;
             }
-            if (radarDot) {
-              radarDot.classList.remove('down', 'checking');
-            }
+            if (radarDot) radarDot.className = "livedot";
             idx = frames.length - 1;
             showFrame(frames[idx]);
             updateLabels();
             if (playing) startLoop();
           } catch (e) {
             liveFrameLabel.textContent = "Frame error";
-            if (radarDot) {
-              radarDot.classList.remove('checking');
-              radarDot.classList.add('down');
-            }
+            if (radarDot) radarDot.className = "livedot down";
           }
         }
 
@@ -1445,6 +1322,19 @@
           goToFrame(idx + 1);
         });
 
+        if (recenterBtn) {
+          recenterBtn.addEventListener('click', () => {
+            map.setView([12.6, 121.8], 6);
+          });
+        }
+
+        if (opacitySlider) {
+          opacitySlider.addEventListener('input', (e) => {
+            opacityVal = parseFloat(e.target.value);
+            if (overlay) overlay.setOpacity(opacityVal);
+          });
+        }
+
         radarSlider.addEventListener('mousedown', () => { isDraggingRadar = true; setPlaying(false); });
         radarSlider.addEventListener('touchstart', () => { isDraggingRadar = true; setPlaying(false); });
         window.addEventListener('mouseup', () => { isDraggingRadar = false; });
@@ -1453,6 +1343,22 @@
         radarSlider.addEventListener('input', (e) => {
           setPlaying(false);
           goToFrame(parseInt(e.target.value, 10));
+        });
+
+        window.addEventListener('keydown', (e) => {
+          if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+          if (e.code === 'Space') {
+            e.preventDefault();
+            setPlaying(!playing);
+          } else if (e.code === 'ArrowLeft') {
+            e.preventDefault();
+            setPlaying(false);
+            goToFrame(idx - 1);
+          } else if (e.code === 'ArrowRight') {
+            e.preventDefault();
+            setPlaying(false);
+            goToFrame(idx + 1);
+          }
         });
 
         document.querySelectorAll('.segbtn[data-frames]').forEach(btn => {
@@ -1478,7 +1384,7 @@
 
         const templateDbz = `
           <div class="legend-wrapper">
-            <div class="legend-bar-center" style="width: 16px; background: linear-gradient(to top, #444444 0%, #888888 12%, #cccccc 14.5%, #00ff00 15%, #00dd00 30%, #ffff00 42%, #ff8800 58%, #ff0000 75%, #ff00ff 88%, #aa00cc 100%);"></div>
+            <div class="legend-bar-center" style="width: 14px; background: linear-gradient(to top, #444444 0%, #888888 12%, #cccccc 14.5%, #00ff00 15%, #00dd00 30%, #ffff00 42%, #ff8800 58%, #ff0000 75%, #ff00ff 88%, #aa00cc 100%);"></div>
             <div class="legend-label left" style="bottom: 0%;">dBZ 0</div>
             <div class="legend-label left" style="bottom: 14.5%;">15</div>
             <div class="legend-label left" style="bottom: 40%;">30</div>
@@ -1490,7 +1396,7 @@
 
         const templateRr = `
           <div class="legend-wrapper">
-            <div class="legend-bar-center" style="width: 16px;">
+            <div class="legend-bar-center" style="width: 14px;">
               <div class="legend-block-layer" style="bottom: 0%; height: 14.3%; background: #144200;"></div>
               <div class="legend-block-layer" style="bottom: 14.3%; height: 14.3%; background: #40DF00;"></div>
               <div class="legend-block-layer" style="bottom: 28.6%; height: 14.3%; background: #FFFF00;"></div>
@@ -1519,11 +1425,7 @@
           const dotClasses = radarDot ? radarDot.className : "livedot";
           const titleText = product === 'rr' ? "Live radar · Rain Rate (source: PAGASA, processed HERE)" : "Live radar · dBZ reflectivity (source: PAGASA, processed HERE)";
           radarTileTitle.innerHTML = `<span class="${dotClasses}" id="dot-radar" title="Connection status"></span>` + titleText;
-          if (product === 'rr') {
-            radarLegendBox.innerHTML = templateRr;
-          } else {
-            radarLegendBox.innerHTML = templateDbz;
-          }
+          radarLegendBox.innerHTML = product === 'rr' ? templateRr : templateDbz;
         }
         updateProductLabels();
 
@@ -1534,16 +1436,7 @@
             product = btn.dataset.product;
             updateProductLabels();
             buildFrameUrls();
-            const testImg = new Image();
-            testImg.onload = () => { goToFrame(idx); };
-            testImg.onerror = () => {
-              product = "dbz";
-              document.querySelectorAll('.segbtn[data-product]').forEach(b => b.classList.toggle('active', b.dataset.product === 'dbz'));
-              updateProductLabels();
-              buildFrameUrls();
-              goToFrame(idx);
-            };
-            testImg.src = frames[idx];
+            goToFrame(idx);
           });
         });
 
@@ -1559,8 +1452,8 @@
     setInterval(loadRain, 10 * 60 * 1000);
 
     const rainAdv = [
-      { cls: "lvl-adv-affect", label: "Expecting · Light to Moderate with at times Heavy Rainfall is expected in the next 2–3 hrs", action: "Rainfall is expected to affect the locality within the next 2–3 hrs. Communities should prepare early." },
-      { cls: "lvl-adv-affect", label: "Affecting · Light to Moderate with at times Heavy Rainfall which may persist within 3 hours below HR-WS threshold", action: "Rainfall currently affecting the locality, below Heavy Rainfall Warning threshold. Still light to moderate with at times heavy, but can cause inconvenience." }
+      { cls: "lvl-adv-expecting", label: "Expecting · Light to Moderate with at times Heavy Rainfall is expected in the next 2–3 hrs", action: "Rainfall is expected to affect the locality within the next 2–3 hrs. Communities should prepare early." },
+      { cls: "lvl-adv-affecting", label: "Affecting · Light to Moderate with at times Heavy Rainfall which may persist within 3 hours below HR-WS threshold", action: "Rainfall currently affecting the locality, below Heavy Rainfall Warning threshold." }
     ];
     const rainadvlist = document.getElementById('rainadvlist');
     rainAdv.forEach(c => {
@@ -1571,9 +1464,9 @@
     });
 
     const classes = [
-      { cls: "lvl-heavy", label: "Yellow · Watch · 7.5–15 mm/hr", action: "Seeks community awareness. Possible flood in low-lying areas and along river channels." },
-      { cls: "lvl-intense", label: "Orange · Alert · 15–30 mm/hr", action: "Seeks community preparedness. Flooding occurring in several areas; landslide risk elevated." },
-      { cls: "lvl-torrential", label: "Red · Emergency · 30+ mm/hr", action: "Seeks community response. Severe widespread flooding — many roads impassable, heightened landslide risk." },
+      { cls: "lvl-heavy", label: "Yellow · Watch · 7.5–15 mm/hr", action: "Seeks community awareness. Possible flood in low-lying areas." },
+      { cls: "lvl-intense", label: "Orange · Alert · 15–30 mm/hr", action: "Seeks community preparedness. Flooding occurring in several areas." },
+      { cls: "lvl-torrential", label: "Red · Emergency · 30+ mm/hr", action: "Seeks community response. Severe widespread flooding." },
     ];
     const classlist = document.getElementById('classlist');
     classes.forEach(c => {
@@ -1584,8 +1477,8 @@
     });
 
     const tsa = [
-      { cls: "lvl-expecting", label: "Expecting · next 2–3 hrs", action: "Thunderstorms expected to affect the locality. Communities should prepare early." },
-      { cls: "lvl-affecting", label: "Affecting · next 2 hrs", action: "Thunderstorms active over the locality. Take immediate precautions." },
+      { cls: "lvl-expecting", label: "Expecting · next 2–3 hrs", action: "Thunderstorms expected to affect the locality." },
+      { cls: "lvl-affecting", label: "Affecting · next 2 hrs", action: "Thunderstorms active over the locality. Take precautions." },
     ];
     const tsalist = document.getElementById('tsalist');
     tsa.forEach(c => {

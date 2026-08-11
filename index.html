@@ -256,9 +256,16 @@
       margin-bottom: .75rem;
     }
 
+    /* Mobile 2x2 grid view for city tiles, expanding to auto-fill on larger screens */
     .row-cities {
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       align-items: start;
+    }
+
+    @media (min-width: 640px) {
+      .row-cities {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      }
     }
 
     .row-2col {
@@ -822,38 +829,6 @@
       display: block;
     }
 
-    .pdf-mobile-fallback {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      padding: 1.5rem;
-      text-align: center;
-      gap: 0.8rem;
-    }
-
-    .pdf-mobile-fallback p {
-      color: var(--muted);
-      font-size: 0.82rem;
-      margin: 0;
-    }
-
-    .pdf-btn {
-      background: var(--rain);
-      color: #0F151C;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.2s ease;
-    }
-
-    .pdf-btn:hover {
-      filter: brightness(1.1);
-    }
-
     .classrow {
       display: flex;
       align-items: flex-start;
@@ -931,7 +906,7 @@
 
   <header>
     <div>
-      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.4.1</div>
+      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.4.2</div>
       <h1>Uulan Ba?</h1>
       <p>Philippines Weather and Rain Dashboard.</p>
     </div>
@@ -957,7 +932,7 @@
     <!-- Search Location Preview Container -->
     <div id="search-preview-slot" class="search-preview-slot"></div>
 
-    <!-- Active City Tiles Grid -->
+    <!-- Active City Tiles Grid (2x2 layout on mobile) -->
     <div class="row row-cities" id="citygrid-slot"></div>
 
     <div class="row row-2col">
@@ -1060,15 +1035,23 @@
       </div>
     </div>
 
-    <!-- Live Hazard Map (PANaHON) -->
+    <!-- Live Hazard Map (PANaHON) with Expanded View Feature -->
     <div class="row row-8-4">
-      <div class="tile tile-hrw">
-        <div class="tile-label">
+      <div id="panahonWrapper" class="tile tile-hrw transition-all duration-300">
+        <div class="tile-label flex items-center justify-between">
           <span>Live hazard map (PANaHON)</span>
-          <a href="https://www.panahon.gov.ph" target="_blank" rel="noopener">open direct &#8599;</a>
+          <div class="flex items-center gap-2">
+            <button onclick="togglePanahonFullscreen()" id="panahonToggleBtn" class="segbtn bg-[#152A38] text-rain border-rain font-bold flex items-center gap-1">
+              <svg id="toggleIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+              </svg>
+              <span id="panahonToggleText">Expand Map View</span>
+            </button>
+            <a href="https://www.panahon.gov.ph" target="_blank" rel="noopener">open direct &#8599;</a>
+          </div>
         </div>
-        <div class="hrw-hint">Tip: Scroll inside the map frame below to locate the top navigation and notification menu.</div>
-        <iframe id="frame-hrw" src="https://www.panahon.gov.ph" allow="geolocation; notifications; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals" loading="lazy"></iframe>
+        <div class="hrw-hint">Tip: Use Expand Map View on mobile devices to easily interact with layer drawers and navigation menus.</div>
+        <iframe id="frame-hrw" src="https://www.panahon.gov.ph" allow="geolocation; notifications; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals" loading="lazy" style="width: 100%; flex: 1; border: 0; display: block; min-height: 480px;"></iframe>
       </div>
       <div class="tile tile-criteria">
         <div class="tile-label"><span>Warning criteria (PANaHON layers)</span></div>
@@ -1109,6 +1092,32 @@
   <script>
     window.leafletMap = null;
 
+    let isPanahonExpanded = false;
+    function togglePanahonFullscreen() {
+        const wrapper = document.getElementById('panahonWrapper');
+        const toggleText = document.getElementById('panahonToggleText');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const iframe = document.getElementById('frame-hrw');
+        
+        isPanahonExpanded = !isPanahonExpanded;
+        
+        if (isPanahonExpanded) {
+            wrapper.classList.add('fixed', 'inset-4', 'z-[9999]', 'shadow-2xl', 'border-2', 'border-rain');
+            wrapper.style.height = 'calc(100vh - 2rem)';
+            iframe.style.minHeight = 'calc(100vh - 120px)';
+            toggleText.textContent = 'Exit Expanded View';
+            toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
+            document.body.style.overflow = 'hidden';
+        } else {
+            wrapper.classList.remove('fixed', 'inset-4', 'z-[9999]', 'shadow-2xl', 'border-2', 'border-rain');
+            wrapper.style.height = '';
+            iframe.style.minHeight = '480px';
+            toggleText.textContent = 'Expand Map View';
+            toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
     const defaultCities = [
       { name: "Manila", lat: 14.5995, lon: 120.9842 },
       { name: "Quezon City", lat: 14.6760, lon: 121.0437 },
@@ -1136,7 +1145,6 @@
         localStorage.setItem('uulan_custom_cities', JSON.stringify(custom));
       }
       
-      // Clear preview slot when added to grid
       const previewSlot = document.getElementById('search-preview-slot');
       if (previewSlot) previewSlot.innerHTML = '';
       
@@ -1316,7 +1324,6 @@
       }
     }
 
-    /* Handle Auto-Expand Search Result Location */
     async function previewSearchedLocation(city) {
       const previewSlot = document.getElementById('search-preview-slot');
       if (!previewSlot) return;
@@ -1404,7 +1411,6 @@
       }
     }
 
-    /* Location Geocoding Search Initialization */
     (function initLocationSearch() {
       const searchInput = document.getElementById('citySearchInput');
       const searchResults = document.getElementById('searchResults');
@@ -1473,7 +1479,6 @@
       });
     })();
 
-    /* Satellite Image Loop Logic */
     (function() {
       const img = document.getElementById('satimg');
       const dot = document.getElementById('dot-sat');
@@ -1571,7 +1576,6 @@
       setInterval(discoverFrames, 5 * 60 * 1000);
     })();
 
-    /* PAGASA PDF Viewer Initializer (Mobile-Optimized Engine) */
     (function initPagasaPdfViewer() {
       const pdfUrl = 'https://pubfiles.pagasa.dost.gov.ph/tamss/weather/advisory.pdf';
       const container = document.getElementById('pagasa-pdf-container');
@@ -1580,7 +1584,6 @@
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
 
       if (isMobile) {
-        // Use Google Docs Viewer fallback for seamless PDF rendering on Mobile iOS/Android browsers
         container.innerHTML = `
           <iframe 
             src="https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true" 
@@ -1598,7 +1601,6 @@
       }
     })();
 
-    /* Interactive Radar Map JS */
     (function() {
       try {
         const DATA_BASE = "https://data.garbinwx.org";

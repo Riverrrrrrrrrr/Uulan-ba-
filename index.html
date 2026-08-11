@@ -59,6 +59,8 @@
     }
 
     header {
+      position: relative;
+      z-index: 1000;
       padding: 1.2rem 1.5rem .9rem;
       border-bottom: 1px solid var(--line);
       display: flex;
@@ -96,24 +98,137 @@
 
     .header-actions {
       display: flex;
-      gap: .5rem;
+      gap: .6rem;
       align-items: center;
       flex-wrap: wrap;
+    }
+
+    /* Aesthetic Search Component */
+    .search-wrapper {
+      position: relative;
+      min-width: 260px;
+      flex: 1;
+    }
+
+    .search-input-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-icon-svg {
+      position: absolute;
+      left: 0.85rem;
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: var(--muted);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+      transition: stroke 0.2s ease;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: .55rem .85rem .55rem 2.4rem;
+      border-radius: 8px;
+      font-size: .8rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--rain);
+      box-shadow: 0 0 0 3px rgba(79, 163, 209, 0.15);
+      background: var(--panel);
+    }
+
+    .search-input:focus + .search-icon-svg {
+      stroke: var(--rain);
+    }
+
+    .search-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      z-index: 2000;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+      display: none;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .search-dropdown::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .search-dropdown::-webkit-scrollbar-track {
+      background: var(--panel2);
+    }
+
+    .search-dropdown::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 3px;
+    }
+
+    .search-dropdown.active {
+      display: block;
+    }
+
+    .search-item {
+      padding: .6rem .85rem;
+      font-size: .78rem;
+      cursor: pointer;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .search-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-item:hover {
+      background: #152A38;
+      color: var(--rain);
+    }
+
+    .search-item-name {
+      font-weight: 600;
+    }
+
+    .search-item-meta {
+      font-size: .68rem;
+      color: var(--muted);
+      margin-top: .1rem;
     }
 
     .refresh {
       background: var(--panel2);
       border: 1px solid var(--line);
       color: var(--text);
-      padding: .45rem .95rem;
-      border-radius: 6px;
+      padding: .55rem .95rem;
+      border-radius: 8px;
       font-size: .78rem;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
     }
 
     .refresh:hover {
       border-color: var(--rain);
+      color: var(--rain);
       transform: translateY(-1px);
     }
 
@@ -122,6 +237,8 @@
     }
 
     main {
+      position: relative;
+      z-index: 1;
       max-width: 1280px;
       margin: 0 auto;
       padding: 1.1rem 1.5rem 3rem;
@@ -224,6 +341,33 @@
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
     }
 
+    /* Search Preview Tile Specifics */
+    .search-preview-slot {
+      margin-bottom: 0.85rem;
+    }
+
+    .tile-city.preview-card {
+      border: 1px dashed var(--rain);
+      background: rgba(26, 35, 46, 0.95);
+    }
+
+    .add-city-btn {
+      background: var(--rain);
+      color: #0F151C;
+      border: none;
+      padding: .25rem .6rem;
+      border-radius: 6px;
+      font-size: .7rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .add-city-btn:hover {
+      filter: brightness(1.15);
+      transform: scale(1.03);
+    }
+
     .tile-city .bar {
       position: absolute;
       left: 0;
@@ -240,6 +384,27 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+
+    .cityname-right {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .remove-city-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: .85rem;
+      cursor: pointer;
+      padding: 0 .2rem;
+      line-height: 1;
+      transition: color 0.2s ease;
+    }
+
+    .remove-city-btn:hover {
+      color: var(--red);
     }
 
     .cityname .toggle-icon {
@@ -389,7 +554,7 @@
       justify-content: center;
     }
 
-    /* Radar Tile & Compact Embedded Controls */
+    /* Radar Tile & Embedded Controls */
     .tile-radar {
       padding: 0;
       height: clamp(480px, 80vh, 640px);
@@ -558,7 +723,6 @@
       min-width: 70px;
     }
 
-    /* Radar Legend Container */
     .radar-legend {
       position: absolute;
       top: 8px;
@@ -644,8 +808,10 @@
     #pagasa-pdf-container {
       width: 100%;
       flex: 1;
-      background: #525659;
+      background: #1A232E;
       min-height: 0;
+      position: relative;
+      overflow: hidden;
     }
 
     #pagasa-pdf-container iframe,
@@ -654,6 +820,38 @@
       height: 100%;
       border: none;
       display: block;
+    }
+
+    .pdf-mobile-fallback {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 1.5rem;
+      text-align: center;
+      gap: 0.8rem;
+    }
+
+    .pdf-mobile-fallback p {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin: 0;
+    }
+
+    .pdf-btn {
+      background: var(--rain);
+      color: #0F151C;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .pdf-btn:hover {
+      filter: brightness(1.1);
     }
 
     .classrow {
@@ -725,6 +923,7 @@
       .controls-grid { grid-template-columns: 1fr 1fr; }
       .radar-legend { padding: .6rem .5rem; top: 6px; left: 6px; }
       .legend-wrapper { height: 140px !important; font-size: 9px !important; margin: 0 3.8rem 0 2rem !important; }
+      .search-wrapper { min-width: 100%; }
     }
   </style>
 </head>
@@ -732,11 +931,22 @@
 
   <header>
     <div>
-      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.3.1</div>
+      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.4.1</div>
       <h1>Uulan Ba?</h1>
       <p>Philippines Weather and Rain Dashboard.</p>
     </div>
     <div class="header-actions">
+      <!-- Aesthetic Search Input Component -->
+      <div class="search-wrapper">
+        <div class="search-input-container">
+          <input type="text" id="citySearchInput" class="search-input" placeholder="Search city or town..." autocomplete="off" />
+          <svg class="search-icon-svg" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
+        <div id="searchResults" class="search-dropdown"></div>
+      </div>
       <button class="refresh" onclick="loadRain()">Refresh</button>
     </div>
   </header>
@@ -744,6 +954,10 @@
   <main>
     <p class="status" id="status">Loading rainfall data&hellip;</p>
 
+    <!-- Search Location Preview Container -->
+    <div id="search-preview-slot" class="search-preview-slot"></div>
+
+    <!-- Active City Tiles Grid -->
     <div class="row row-cities" id="citygrid-slot"></div>
 
     <div class="row row-2col">
@@ -765,6 +979,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Mobile-Robust Advisory PDF Container -->
       <div class="tile tile-advisory">
         <div class="tile-label">
           <span>PAGASA weather advisory (live)</span>
@@ -791,7 +1007,6 @@
           <div class="radar-legend" id="radarLegendBox"></div>
         </div>
 
-        <!-- Integrated Radar Control Suite -->
         <div class="radar-controls-embedded">
           <div class="controls-top-row">
             <div class="controls-time" id="radarFrameTime">&mdash;</div>
@@ -892,7 +1107,9 @@
   </footer>
 
   <script>
-    const cities = [
+    window.leafletMap = null;
+
+    const defaultCities = [
       { name: "Manila", lat: 14.5995, lon: 120.9842 },
       { name: "Quezon City", lat: 14.6760, lon: 121.0437 },
       { name: "Cebu City", lat: 10.3157, lon: 123.8854 },
@@ -903,6 +1120,43 @@
       { name: "Legazpi", lat: 13.1391, lon: 123.7438 },
       { name: "Tacloban", lat: 11.2543, lon: 125.0000 },
     ];
+
+    function getCustomCities() {
+      try {
+        return JSON.parse(localStorage.getItem('uulan_custom_cities')) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function addCustomCity(city) {
+      const custom = getCustomCities();
+      if (!custom.some(c => c.name.toLowerCase() === city.name.toLowerCase())) {
+        custom.unshift({ ...city, isCustom: true });
+        localStorage.setItem('uulan_custom_cities', JSON.stringify(custom));
+      }
+      
+      // Clear preview slot when added to grid
+      const previewSlot = document.getElementById('search-preview-slot');
+      if (previewSlot) previewSlot.innerHTML = '';
+      
+      loadRain();
+      if (window.leafletMap) {
+        window.leafletMap.flyTo([city.lat, city.lon], 9, { duration: 1.2 });
+      }
+    }
+
+    function removeCustomCity(cityName, e) {
+      if (e) e.stopPropagation();
+      let custom = getCustomCities();
+      custom = custom.filter(c => c.name.toLowerCase() !== cityName.toLowerCase());
+      localStorage.setItem('uulan_custom_cities', JSON.stringify(custom));
+      loadRain();
+    }
+
+    function getAllCities() {
+      return [...getCustomCities(), ...defaultCities];
+    }
 
     function classify(mmhr) {
       if (mmhr < 7.5) return { label: "Advisory", cls: "lvl-adv-affecting" };
@@ -939,9 +1193,11 @@
       status.textContent = "Loading rainfall data…";
       slot.innerHTML = "";
 
+      const activeCities = getAllCities();
+
       try {
-        const lats = cities.map(c => c.lat).join(',');
-        const lons = cities.map(c => c.lon).join(',');
+        const lats = activeCities.map(c => c.lat).join(',');
+        const lons = activeCities.map(c => c.lon).join(',');
 
         const batchUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&models=ecmwf_ifs025&current=precipitation,rain,temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation&timezone=Asia%2FManila`;
         
@@ -951,7 +1207,7 @@
         const data = await response.json();
         const resultsArray = Array.isArray(data) ? data : [data];
 
-        const cityDataList = cities.map((c, i) => {
+        const cityDataList = activeCities.map((c, i) => {
           const res = resultsArray[i];
           const precip = res?.current?.precipitation ?? res?.current?.rain ?? 0;
           const temp = res?.current?.temperature_2m;
@@ -967,7 +1223,7 @@
             }
           }
 
-          return { name: c.name, precip, temp, hourly, maxProb };
+          return { name: c.name, lat: c.lat, lon: c.lon, isCustom: c.isCustom, precip, temp, hourly, maxProb };
         });
 
         cityDataList.sort((a, b) => b.precip - a.precip || b.maxProb - a.maxProb || a.name.localeCompare(b.name));
@@ -1007,9 +1263,19 @@
             `;
           }
 
+          const removeBtnHtml = res.isCustom 
+            ? `<button class="remove-city-btn" title="Remove location" onclick="removeCustomCity('${res.name.replace(/'/g, "\\'")}', event)">&#10005;</button>` 
+            : '';
+
           tile.innerHTML = `
             <div class="bar" style="background:${barColor(info.cls)}"></div>
-            <div class="cityname">${res.name} <span class="toggle-icon">&#9660;</span></div>
+            <div class="cityname">
+              <span>${res.name}</span>
+              <div class="cityname-right">
+                ${removeBtnHtml}
+                <span class="toggle-icon">&#9660;</span>
+              </div>
+            </div>
             <div class="citymeta">${res.temp !== undefined ? res.temp.toFixed(1) + '°C' : ''}</div>
             <div class="rainrow"><span class="rainval">${res.precip.toFixed(1)}</span><span class="rainunit">mm/hr</span></div>
             ${hourlyHtml}
@@ -1025,6 +1291,9 @@
               if (!isExpanded) {
                 tile.classList.add('expanded');
                 tile.style.viewTransitionName = 'active-card';
+                if (window.leafletMap) {
+                  window.leafletMap.flyTo([res.lat, res.lon], 9, { duration: 1.0 });
+                }
               }
             };
 
@@ -1046,6 +1315,163 @@
         status.textContent = "Couldn't load live data right now — try refresh.";
       }
     }
+
+    /* Handle Auto-Expand Search Result Location */
+    async function previewSearchedLocation(city) {
+      const previewSlot = document.getElementById('search-preview-slot');
+      if (!previewSlot) return;
+
+      previewSlot.innerHTML = `<div class="status">Fetching weather preview for ${city.name}…</div>`;
+
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&models=ecmwf_ifs025&current=precipitation,rain,temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation&timezone=Asia%2FManila`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const precip = data?.current?.precipitation ?? data?.current?.rain ?? 0;
+        const temp = data?.current?.temperature_2m;
+        const hourly = data?.hourly;
+
+        let maxProb = 0;
+        if (hourly && hourly.time) {
+          const nowIdx = hourly.time.findIndex(t => new Date(t) >= new Date());
+          const startIdx = nowIdx !== -1 ? nowIdx : 0;
+          for (let k = startIdx; k < Math.min(startIdx + 5, hourly.time.length); k++) {
+            const prob = hourly.precipitation_probability ? hourly.precipitation_probability[k] : 0;
+            if (prob > maxProb) maxProb = prob;
+          }
+        }
+
+        const info = classify(precip);
+        let rows = '';
+        if (hourly && hourly.time) {
+          const nowIdx = hourly.time.findIndex(t => new Date(t) >= new Date());
+          const startIdx = nowIdx !== -1 ? nowIdx : 0;
+          for (let i = startIdx; i < Math.min(startIdx + 5, hourly.time.length); i++) {
+            const timeStr = new Date(hourly.time[i]).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true });
+            const tempVal = hourly.temperature_2m[i];
+            const probVal = hourly.precipitation_probability ? hourly.precipitation_probability[i] : 0;
+            rows += `
+              <div class="hourly-row">
+                <span style="font-weight: 600;">${timeStr}</span>
+                <span>${tempVal !== undefined ? tempVal.toFixed(1) + '°C' : ''}</span>
+                <span style="color: ${probVal > 50 ? 'var(--rain)' : 'var(--muted)'}; font-weight: 600;">${probVal}% rain</span>
+              </div>
+            `;
+          }
+        }
+
+        const verdictText = getUulanBaVerdict(maxProb, precip);
+        const isAlreadyAdded = getAllCities().some(c => c.name.toLowerCase() === city.name.toLowerCase());
+
+        previewSlot.innerHTML = `
+          <div class="tile tile-city preview-card expanded">
+            <div class="bar" style="background:${barColor(info.cls)}"></div>
+            <div class="cityname">
+              <span>🔍 ${city.name} <small style="font-weight:400; color:var(--muted); font-size: 0.7rem;">(Search Preview)</small></span>
+              <div class="cityname-right">
+                ${!isAlreadyAdded ? `<button class="add-city-btn" id="saveCityBtn">＋ Add to Cities</button>` : `<span style="font-size:0.7rem; color:var(--rain);">✓ Saved in list</span>`}
+              </div>
+            </div>
+            <div class="citymeta">${temp !== undefined ? temp.toFixed(1) + '°C' : ''}</div>
+            <div class="rainrow"><span class="rainval">${precip.toFixed(1)}</span><span class="rainunit">mm/hr</span></div>
+            <div class="city-details" style="max-height: 280px; margin-top: .8rem; padding-top: .8rem; border-top-color: var(--line);">
+              <div class="city-details-inner">
+                <div class="uulan-verdict">${verdictText}</div>
+                <div class="hourly-title">Next 5 Hours Forecast</div>
+                <div class="hourly-table">${rows}</div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const saveBtn = document.getElementById('saveCityBtn');
+        if (saveBtn) {
+          saveBtn.addEventListener('click', () => {
+            addCustomCity(city);
+          });
+        }
+
+        if (window.leafletMap) {
+          window.leafletMap.flyTo([city.lat, city.lon], 9, { duration: 1.2 });
+        }
+
+        previewSlot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      } catch (err) {
+        console.error("Preview failed:", err);
+        previewSlot.innerHTML = `<div class="status">Error loading search preview. Try again.</div>`;
+      }
+    }
+
+    /* Location Geocoding Search Initialization */
+    (function initLocationSearch() {
+      const searchInput = document.getElementById('citySearchInput');
+      const searchResults = document.getElementById('searchResults');
+      let searchDebounce = null;
+
+      if (!searchInput || !searchResults) return;
+
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+        clearTimeout(searchDebounce);
+
+        if (query.length < 2) {
+          searchResults.classList.remove('active');
+          searchResults.innerHTML = '';
+          return;
+        }
+
+        searchDebounce = setTimeout(async () => {
+          try {
+            const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=6&language=en&format=json`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (!data.results || data.results.length === 0) {
+              searchResults.innerHTML = `<div class="search-item" style="cursor:default; color:var(--muted);">No locations found</div>`;
+              searchResults.classList.add('active');
+              return;
+            }
+
+            searchResults.innerHTML = data.results.map(loc => {
+              const meta = [loc.admin1, loc.country].filter(Boolean).join(', ');
+              return `
+                <div class="search-item" data-name="${loc.name.replace(/"/g, '&quot;')}" data-lat="${loc.latitude}" data-lon="${loc.longitude}">
+                  <span class="search-item-name">${loc.name}</span>
+                  <span class="search-item-meta">${meta}</span>
+                </div>
+              `;
+            }).join('');
+
+            searchResults.classList.add('active');
+          } catch (err) {
+            console.error("Geocoding failed:", err);
+          }
+        }, 300);
+      });
+
+      searchResults.addEventListener('click', (e) => {
+        const item = e.target.closest('.search-item');
+        if (!item || !item.dataset.lat) return;
+
+        const searchedCity = {
+          name: item.dataset.name,
+          lat: parseFloat(item.dataset.lat),
+          lon: parseFloat(item.dataset.lon)
+        };
+
+        previewSearchedLocation(searchedCity);
+        searchInput.value = '';
+        searchResults.classList.remove('active');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-wrapper')) {
+          searchResults.classList.remove('active');
+        }
+      });
+    })();
 
     /* Satellite Image Loop Logic */
     (function() {
@@ -1145,26 +1571,24 @@
       setInterval(discoverFrames, 5 * 60 * 1000);
     })();
 
-    /* PAGASA PDF Viewer Initializer (Responsive Desktop / Mobile Engine) */
+    /* PAGASA PDF Viewer Initializer (Mobile-Optimized Engine) */
     (function initPagasaPdfViewer() {
       const pdfUrl = 'https://pubfiles.pagasa.dost.gov.ph/tamss/weather/advisory.pdf';
       const container = document.getElementById('pagasa-pdf-container');
       if (!container) return;
       
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
 
       if (isMobile) {
-        // Mobile: Use Microsoft Web Viewer engine to prevent forced file downloads
+        // Use Google Docs Viewer fallback for seamless PDF rendering on Mobile iOS/Android browsers
         container.innerHTML = `
           <iframe 
-            src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(pdfUrl)}" 
+            src="https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true" 
             width="100%" 
             height="100%" 
-            frameborder="0" 
-            loading="lazy">
+            frameborder="0">
           </iframe>`;
       } else {
-        // Desktop: Clean native embedded view with toolbars hidden
         container.innerHTML = `
           <embed 
             src="${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0" 
@@ -1198,6 +1622,8 @@
           scrollWheelZoom: true
         }).setView([12.6, 121.8], 6);
         
+        window.leafletMap = map;
+
         L.control.zoom({ position: 'topright' }).addTo(map);
         L.tileLayer(TILE_URL, { maxZoom: 22, maxNativeZoom: 19, className: 'basemap-contrast' }).addTo(map);
 

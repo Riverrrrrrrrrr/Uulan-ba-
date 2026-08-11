@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Uulan Ba?</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
@@ -22,6 +22,7 @@
 
     html {
       scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
     }
 
     * {
@@ -34,6 +35,7 @@
       color: var(--text);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       line-height: 1.5;
+      overflow-x: hidden;
     }
 
     ::view-transition-old(root),
@@ -101,12 +103,19 @@
       gap: .6rem;
       align-items: center;
       flex-wrap: wrap;
+      width: 100%;
+    }
+
+    @media (min-width: 640px) {
+      .header-actions {
+        width: auto;
+      }
     }
 
     /* Aesthetic Search Component */
     .search-wrapper {
       position: relative;
-      min-width: 260px;
+      min-width: 240px;
       flex: 1;
     }
 
@@ -135,9 +144,9 @@
       background: var(--panel2);
       border: 1px solid var(--line);
       color: var(--text);
-      padding: .55rem .85rem .55rem 2.4rem;
+      padding: .6rem 2.2rem .6rem 2.4rem;
       border-radius: 8px;
-      font-size: .8rem;
+      font-size: .85rem;
       outline: none;
       transition: all 0.2s ease;
     }
@@ -150,6 +159,34 @@
 
     .search-input:focus + .search-icon-svg {
       stroke: var(--rain);
+    }
+
+    .search-clear-btn {
+      position: absolute;
+      right: 0.65rem;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      padding: 0;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .search-clear-btn:hover {
+      color: var(--text);
+      background-color: var(--line);
+    }
+
+    .search-clear-btn.active {
+      display: flex;
     }
 
     .search-dropdown {
@@ -166,6 +203,7 @@
       display: none;
       max-height: 260px;
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .search-dropdown::-webkit-scrollbar {
@@ -186,8 +224,8 @@
     }
 
     .search-item {
-      padding: .6rem .85rem;
-      font-size: .78rem;
+      padding: .75rem .85rem;
+      font-size: .82rem;
       cursor: pointer;
       border-bottom: 1px solid var(--line);
       display: flex;
@@ -199,7 +237,7 @@
       border-bottom: none;
     }
 
-    .search-item:hover {
+    .search-item:hover, .search-item:active {
       background: #152A38;
       color: var(--rain);
     }
@@ -209,21 +247,22 @@
     }
 
     .search-item-meta {
-      font-size: .68rem;
+      font-size: .7rem;
       color: var(--muted);
-      margin-top: .1rem;
+      margin-top: .15rem;
     }
 
     .refresh {
       background: var(--panel2);
       border: 1px solid var(--line);
       color: var(--text);
-      padding: .55rem .95rem;
+      padding: .6rem .95rem;
       border-radius: 8px;
-      font-size: .78rem;
+      font-size: .8rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      touch-action: manipulation;
     }
 
     .refresh:hover {
@@ -241,7 +280,7 @@
       z-index: 1;
       max-width: 1280px;
       margin: 0 auto;
-      padding: 1.1rem 1.5rem 3rem;
+      padding: 1.1rem 1.25rem 3rem;
     }
 
     .status {
@@ -256,7 +295,6 @@
       margin-bottom: .75rem;
     }
 
-    /* Mobile 2x2 grid view for city tiles, expanding to auto-fill on larger screens */
     .row-cities {
       grid-template-columns: repeat(2, 1fr);
       align-items: start;
@@ -329,8 +367,10 @@
 
     /* City tiles */
     .tile-city {
-      padding: .7rem .8rem;
+      padding: .75rem .85rem;
       cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
     }
 
     .tile-city:hover {
@@ -348,7 +388,6 @@
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
     }
 
-    /* Search Preview Tile Specifics */
     .search-preview-slot {
       margin-bottom: 0.85rem;
     }
@@ -362,17 +401,37 @@
       background: var(--rain);
       color: #0F151C;
       border: none;
-      padding: .25rem .6rem;
+      padding: .35rem .75rem;
       border-radius: 6px;
-      font-size: .7rem;
+      font-size: .72rem;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
+      touch-action: manipulation;
     }
 
-    .add-city-btn:hover {
+    .add-city-btn:hover, .add-city-btn:active {
       filter: brightness(1.15);
-      transform: scale(1.03);
+      transform: scale(1.02);
+    }
+
+    .close-preview-btn {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      padding: .35rem .75rem;
+      border-radius: 6px;
+      font-size: .72rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      touch-action: manipulation;
+    }
+
+    .close-preview-btn:hover, .close-preview-btn:active {
+      color: var(--text);
+      border-color: var(--red);
+      background: rgba(214, 82, 78, 0.15);
     }
 
     .tile-city .bar {
@@ -386,7 +445,7 @@
 
     .cityname {
       font-weight: 600;
-      font-size: .82rem;
+      font-size: .85rem;
       margin-bottom: .05rem;
       display: flex;
       justify-content: space-between;
@@ -403,14 +462,15 @@
       background: none;
       border: none;
       color: var(--muted);
-      font-size: .85rem;
+      font-size: .9rem;
       cursor: pointer;
-      padding: 0 .2rem;
+      padding: .2rem .4rem;
       line-height: 1;
       transition: color 0.2s ease;
+      touch-action: manipulation;
     }
 
-    .remove-city-btn:hover {
+    .remove-city-btn:hover, .remove-city-btn:active {
       color: var(--red);
     }
 
@@ -427,7 +487,7 @@
 
     .citymeta {
       color: var(--muted);
-      font-size: .68rem;
+      font-size: .7rem;
       margin-bottom: .4rem;
     }
 
@@ -439,14 +499,14 @@
     }
 
     .rainval {
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 700;
       transition: color 0.3s ease;
     }
 
     .rainunit {
       color: var(--muted);
-      font-size: .65rem;
+      font-size: .68rem;
     }
 
     .city-details {
@@ -456,12 +516,12 @@
       margin-top: 0;
       padding-top: 0;
       border-top: 1px solid transparent;
-      font-size: .75rem;
+      font-size: .78rem;
       color: var(--muted);
     }
 
     .tile-city.expanded .city-details {
-      max-height: 280px;
+      max-height: 320px;
       margin-top: .8rem;
       padding-top: .8rem;
       border-top-color: var(--line);
@@ -470,7 +530,7 @@
     .uulan-verdict {
       background: var(--panel);
       border-left: 3px solid var(--rain);
-      padding: .6rem .8rem;
+      padding: .65rem .85rem;
       border-radius: 6px;
       font-size: .85rem;
       font-weight: 600;
@@ -497,7 +557,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: .25rem 0;
+      padding: .3rem 0;
       border-bottom: 1px solid var(--line);
     }
 
@@ -551,14 +611,15 @@
       background: var(--panel);
       border: 1px solid var(--line);
       color: var(--text);
-      width: 26px;
-      height: 26px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       cursor: pointer;
-      font-size: .65rem;
+      font-size: .75rem;
       display: flex;
       align-items: center;
       justify-content: center;
+      touch-action: manipulation;
     }
 
     /* Radar Tile & Embedded Controls */
@@ -570,7 +631,7 @@
     }
 
     .tile-radar .tile-label {
-      padding: .6rem .9rem .3rem;
+      padding: .65rem .9rem .35rem;
       margin-bottom: 0;
       flex-shrink: 0;
     }
@@ -582,7 +643,7 @@
     }
 
     .radar-controls-embedded {
-      padding: .5rem .85rem .65rem;
+      padding: .6rem .85rem .75rem;
       border-top: 1px solid var(--line);
       background: var(--panel2);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -609,19 +670,19 @@
     .controls-live {
       color: var(--rain);
       font-weight: 700;
-      font-size: .7rem;
+      font-size: .72rem;
     }
 
     .radar-slider-container {
-      margin-top: .4rem;
-      padding: .15rem 0;
+      margin-top: .5rem;
+      padding: .2rem 0;
     }
 
     .radar-slider {
       width: 100%;
-      height: 5px;
+      height: 8px;
       background: var(--line);
-      border-radius: 3px;
+      border-radius: 4px;
       outline: none;
       -webkit-appearance: none;
       accent-color: var(--rain);
@@ -630,8 +691,8 @@
 
     .radar-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 13px;
-      height: 13px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background: var(--rain);
       cursor: pointer;
@@ -662,7 +723,7 @@
 
     .segbtns {
       display: flex;
-      gap: .2rem;
+      gap: .25rem;
       flex-wrap: wrap;
     }
 
@@ -670,15 +731,16 @@
       background: var(--panel);
       border: 1px solid var(--line);
       color: var(--muted);
-      font-size: .65rem;
+      font-size: .7rem;
       font-weight: 700;
-      padding: .2rem .45rem;
-      border-radius: 4px;
+      padding: .3rem .55rem;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      touch-action: manipulation;
     }
 
-    .segbtn:hover {
+    .segbtn:hover, .segbtn:active {
       border-color: var(--rain);
       color: var(--text);
     }
@@ -710,15 +772,16 @@
       background: var(--panel);
       border: 1px solid var(--line);
       color: var(--text);
-      font-size: .65rem;
+      font-size: .72rem;
       font-weight: 700;
-      padding: .25rem .55rem;
-      border-radius: 4px;
+      padding: .35rem .75rem;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      touch-action: manipulation;
     }
 
-    .transportbtn:hover {
+    .transportbtn:hover, .transportbtn:active {
       border-color: var(--rain);
       transform: translateY(-1px);
     }
@@ -727,7 +790,7 @@
       background: #152A38;
       border-color: var(--rain);
       color: var(--rain);
-      min-width: 70px;
+      min-width: 80px;
     }
 
     .radar-legend {
@@ -862,16 +925,64 @@
 
     .classsection-first { margin-top: 0; padding-top: 0; border-top: none; }
 
-    .tile-hrw { padding: 0; }
+    .tile-hrw { padding: 0; height: auto; }
     .tile-hrw .tile-label { padding: .65rem .9rem .25rem; margin-bottom: 0; }
-    .tile-hrw iframe { width: 100%; flex: 1; border: 0; display: block; min-height: 480px; }
     .tile-criteria { align-self: start; animation: none !important; }
+
+    /* Patch Notes / Changelog styling */
+    .changelog-content {
+      font-size: 0.78rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      padding-top: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .version-block {
+      margin-bottom: 1rem;
+    }
+
+    .version-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .version-tag {
+      font-weight: 700;
+      color: var(--rain);
+      font-size: 0.82rem;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .version-badge-curr {
+      background: rgba(79, 163, 209, 0.15);
+      border: 1px solid var(--rain);
+      color: var(--rain);
+      font-size: 0.62rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .version-list {
+      margin: 0.25rem 0 0 1.2rem;
+      padding: 0;
+    }
+
+    .version-list li {
+      margin-bottom: 0.25rem;
+      line-height: 1.45;
+    }
 
     .linkitem {
       background: var(--panel2);
       border-left: 3px solid var(--amber);
       border-radius: 8px;
-      padding: .7rem .85rem;
+      padding: .75rem .85rem;
       font-size: .78rem;
     }
 
@@ -889,15 +1000,19 @@
       margin: 0 auto;
     }
 
+    /* Mobile Responsive Optimizations (v2.4.2) */
     @media (max-width: 900px) {
+      header { padding: 1rem 1.1rem .8rem; }
+      main { padding: 0.9rem 1.1rem 2.5rem; }
       .row-2col, .row-8-4, .row-3col { grid-template-columns: 1fr; }
       .tile-radar { height: clamp(440px, 75vh, 580px); }
       .tile-sat, .tile-advisory { height: 460px; }
-      .tile-hrw iframe { min-height: 600px; height: 600px; }
-      .controls-grid { grid-template-columns: 1fr 1fr; }
+      .controls-grid { grid-template-columns: 1fr 1fr; gap: .6rem; }
       .radar-legend { padding: .6rem .5rem; top: 6px; left: 6px; }
       .legend-wrapper { height: 140px !important; font-size: 9px !important; margin: 0 3.8rem 0 2rem !important; }
       .search-wrapper { min-width: 100%; }
+      .transportbtn { padding: .45rem .85rem; font-size: .75rem; }
+      .segbtn { padding: .4rem .65rem; font-size: .75rem; }
     }
   </style>
 </head>
@@ -905,7 +1020,7 @@
 
   <header>
     <div>
-      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.4.2</div>
+      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.4.3</div>
       <h1>Uulan Ba?</h1>
       <p>Philippines Weather and Rain Dashboard.</p>
     </div>
@@ -918,6 +1033,7 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
+          <button type="button" id="searchClearBtn" class="search-clear-btn" aria-label="Clear search">✕</button>
         </div>
         <div id="searchResults" class="search-dropdown"></div>
       </div>
@@ -931,7 +1047,7 @@
     <!-- Search Location Preview Container -->
     <div id="search-preview-slot" class="search-preview-slot"></div>
 
-    <!-- Active City Tiles Grid (2x2 layout on mobile) -->
+    <!-- Active City Tiles Grid -->
     <div class="row row-cities" id="citygrid-slot"></div>
 
     <div class="row row-2col">
@@ -1034,17 +1150,22 @@
       </div>
     </div>
 
-    <!-- Live Hazard Map (PANaHON) -->
+    <!-- Live Hazard Map & Criteria Section -->
     <div class="row row-8-4">
       <div id="panahonWrapper" class="tile tile-hrw">
         <div class="tile-label" style="display: flex; justify-content: space-between; align-items: center;">
-          <span>Live hazard map (PANaHON)</span>
+          <span>Live hazard map (PANaHON) &middot; <small style="color:var(--amber);">Temporarily Disabled</small></span>
           <div>
             <a href="https://www.panahon.gov.ph" target="_blank" rel="noopener">open direct &#8599;</a>
           </div>
         </div>
-        <iframe id="frame-hrw" src="https://www.panahon.gov.ph" allow="geolocation; notifications; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals" loading="lazy" style="width: 100%; flex: 1; border: 0; display: block; min-height: 480px;"></iframe>
+        <div style="padding: 2.5rem 1.5rem; text-align: center; background: var(--panel2); border-radius: 8px; margin: 0.85rem; border: 1px dashed var(--line); color: var(--muted); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🚧</div>
+          <strong style="color: var(--text); font-size: 0.9rem; margin-bottom: 0.25rem;">PANaHON Map Maintenance</strong>
+          <p style="font-size: 0.78rem; margin: 0; max-width: 340px;">The embedded hazard map iframe is temporarily suspended for performance optimizations. You can still access live warnings directly at <a href="https://www.panahon.gov.ph" target="_blank" rel="noopener" style="color:var(--rain);">panahon.gov.ph</a>.</p>
+        </div>
       </div>
+
       <div class="tile tile-criteria">
         <div class="tile-label"><span>Warning criteria (PANaHON layers)</span></div>
         <div class="classsection classsection-first">Rainfall Advisory</div>
@@ -1056,6 +1177,79 @@
       </div>
     </div>
 
+    <!-- Patch Notes Section -->
+    <div class="row row-1col">
+      <div class="tile">
+        <div class="tile-label" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Patch Notes & Version History</span>
+          <button id="toggleChangelogBtn" class="segbtn" style="cursor:pointer;">Show Changelog</button>
+        </div>
+        <div id="changelogContent" class="changelog-content" style="display: none;">
+          <div class="version-block">
+            <div class="version-tag">
+              v2.4.3 <span class="version-badge-curr">Current</span>
+            </div>
+            <ul class="version-list">
+              <li><strong>Search Preview Close Button:</strong> Added a dedicated "✕ Close" button beside the "＋ Add to Cities" button in the search result preview card for easy dismissal.</li>
+              <li><strong>In-App Patch Notes:</strong> Integrated an interactive version history panel directly into the site dashboard.</li>
+              <li><strong>Temporary Map Suspension:</strong> Temporarily disabled the embedded PANaHON hazard map iframe in favor of performance optimization and direct external link access.</li>
+            </ul>
+          </div>
+
+          <div class="version-block">
+            <div class="version-tag">v2.4.2 — Mobile Optimization Pass</div>
+            <ul class="version-list">
+              <li><strong>Touch Target Scaling:</strong> Enlarged interactive control targets across satellite scrubbers, radar playback buttons, and town search dropdowns for touchscreens.</li>
+              <li><strong>Mobile Viewport & Overflow Tweaks:</strong> Prevented unintended horizontal scrolling and enhanced map touch gesture responsiveness on mobile viewports.</li>
+            </ul>
+          </div>
+
+          <div class="version-block">
+            <div class="version-tag">v2.4.1 — Search-to-Grid Expansion & Cross-Platform PDF Engine</div>
+            <ul class="version-list">
+              <li><strong>Auto-Expanding Search Preview:</strong> Selecting a searched town instantly fetches live weather data, auto-expands a preview tile, and provides an "＋ Add to Cities" button.</li>
+              <li><strong>Aesthetic Vector Search Icon:</strong> Replaced standard text characters with a custom inline vector SVG search icon.</li>
+              <li><strong>Mobile PDF Viewer Fallback:</strong> Fixed blank gray screen rendering for official advisories on iOS Safari and Android Chrome using Google Docs PDF Viewer fallback.</li>
+            </ul>
+          </div>
+
+          <div class="version-block">
+            <div class="version-tag">v2.4.0 — Geocoding Search Integration</div>
+            <ul class="version-list">
+              <li><strong>Location Lookup:</strong> Integrated Open-Meteo's Geocoding API to let users query any town or municipality across the Philippines.</li>
+            </ul>
+          </div>
+
+          <div class="version-block">
+            <div class="version-tag">v2.3.0 — Interactive Cards & Custom City Management</div>
+            <ul class="version-list">
+              <li><strong>Expandable City Cards:</strong> Added animated card expansion powered by the View Transitions API.</li>
+              <li><strong>"Uulan Ba?" Verdicts:</strong> Automated smart advice based on hourly precipitation probability and intensity.</li>
+              <li><strong>Hourly Forecast Breakdown:</strong> Added 5-hour probability and temperature trend tables inside expanded cards.</li>
+              <li><strong>Custom Location Storage:</strong> Saved user-added cities persistently using browser localStorage.</li>
+            </ul>
+          </div>
+
+          <div class="version-block">
+            <div class="version-tag">v2.0.0 — Advanced Radar, Satellite & Hazard Mapping</div>
+            <ul class="version-list">
+              <li><strong>Live Radar Engine:</strong> Embedded Leaflet-powered radar view supporting dBZ reflectivity and Rain Rate (mm/h) layers with frame scrubbing.</li>
+              <li><strong>Himawari Satellite Loop:</strong> Added automated Himawari satellite animation scrubber with frame auto-discovery.</li>
+              <li><strong>Official PAGASA Advisories:</strong> Embedded live PAGASA weather advisory views and hazard warning criteria.</li>
+            </ul>
+          </div>
+
+          <div class="version-block">
+            <div class="version-tag">v1.0.0 — Initial Release</div>
+            <ul class="version-list">
+              <li><strong>Core Dashboard Setup:</strong> Built the initial dashboard layout featuring dark mode aesthetics, default major Philippine city tiles, and batched ECMWF Open-Meteo weather fetches.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Links row -->
     <div class="row row-3col">
       <div class="linkitem">
         <span class="tag">PAGASA</span>
@@ -1344,6 +1538,7 @@
               <span>🔍 ${city.name} <small style="font-weight:400; color:var(--muted); font-size: 0.7rem;">(Search Preview)</small></span>
               <div class="cityname-right">
                 ${!isAlreadyAdded ? `<button class="add-city-btn" id="saveCityBtn">＋ Add to Cities</button>` : `<span style="font-size:0.7rem; color:var(--rain);">✓ Saved in list</span>`}
+                <button class="close-preview-btn" id="closePreviewBtn" title="Close preview">✕ Close</button>
               </div>
             </div>
             <div class="citymeta">${temp !== undefined ? temp.toFixed(1) + '°C' : ''}</div>
@@ -1365,6 +1560,13 @@
           });
         }
 
+        const closeBtn = document.getElementById('closePreviewBtn');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => {
+            previewSlot.innerHTML = '';
+          });
+        }
+
         if (window.leafletMap) {
           window.leafletMap.flyTo([city.lat, city.lon], 9, { duration: 1.2 });
         }
@@ -1380,13 +1582,42 @@
     (function initLocationSearch() {
       const searchInput = document.getElementById('citySearchInput');
       const searchResults = document.getElementById('searchResults');
+      const searchClearBtn = document.getElementById('searchClearBtn');
       let searchDebounce = null;
 
       if (!searchInput || !searchResults) return;
 
+      function clearSearchState() {
+        searchInput.value = '';
+        searchResults.classList.remove('active');
+        searchResults.innerHTML = '';
+        if (searchClearBtn) searchClearBtn.classList.remove('active');
+        const previewSlot = document.getElementById('search-preview-slot');
+        if (previewSlot) previewSlot.innerHTML = '';
+        searchInput.focus();
+      }
+
+      if (searchClearBtn) {
+        searchClearBtn.addEventListener('click', clearSearchState);
+      }
+
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          clearSearchState();
+        }
+      });
+
       searchInput.addEventListener('input', (e) => {
         const query = e.target.value.trim();
         clearTimeout(searchDebounce);
+
+        if (searchClearBtn) {
+          if (e.target.value.length > 0) {
+            searchClearBtn.classList.add('active');
+          } else {
+            searchClearBtn.classList.remove('active');
+          }
+        }
 
         if (query.length < 2) {
           searchResults.classList.remove('active');
@@ -1435,6 +1666,7 @@
 
         previewSearchedLocation(searchedCity);
         searchInput.value = '';
+        if (searchClearBtn) searchClearBtn.classList.remove('active');
         searchResults.classList.remove('active');
       });
 
@@ -1840,6 +2072,18 @@
       } catch (err) {
         console.error("Radar map failed:", err);
       }
+    })();
+
+    (function initChangelogToggle() {
+      const btn = document.getElementById('toggleChangelogBtn');
+      const content = document.getElementById('changelogContent');
+      if (!btn || !content) return;
+
+      btn.addEventListener('click', () => {
+        const isHidden = content.style.display === 'none';
+        content.style.display = isHidden ? 'block' : 'none';
+        btn.textContent = isHidden ? 'Hide Changelog' : 'Show Changelog';
+      });
     })();
 
     loadRain();

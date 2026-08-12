@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
   <style>
+    /* ==========================================================================
+       Variables & Resets
+       ========================================================================== */
     :root {
       --bg: #0F151C;
       --panel: #1A232E;
@@ -38,6 +41,9 @@
       overflow-x: hidden;
     }
 
+    /* ==========================================================================
+       Animations & Transitions
+       ========================================================================== */
     ::view-transition-old(root),
     ::view-transition-new(root) {
       animation: none;
@@ -45,14 +51,14 @@
 
     ::view-transition-old(active-card),
     ::view-transition-new(active-card) {
-      animation-duration: 0.35s;
-      animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+      animation-duration: 0.45s;
+      animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(14px);
+        transform: translateY(16px);
       }
       to {
         opacity: 1;
@@ -60,28 +66,54 @@
       }
     }
 
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0.96) translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(94, 174, 106, 0.5); }
+      70% { box-shadow: 0 0 0 5px rgba(94, 174, 106, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(94, 174, 106, 0); }
+    }
+
+    @keyframes pulseRed {
+      0% { box-shadow: 0 0 0 0 rgba(214, 82, 78, 0.5); }
+      70% { box-shadow: 0 0 0 5px rgba(214, 82, 78, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(214, 82, 78, 0); }
+    }
+
+    /* ==========================================================================
+       Header Styles
+       ========================================================================== */
     header {
       position: relative;
       z-index: 1000;
-      padding: 1.2rem 1.5rem .9rem;
+      padding: 1.2rem 1.5rem 0.9rem;
       border-bottom: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       flex-wrap: wrap;
-      gap: .8rem;
+      gap: 0.8rem;
       max-width: 1280px;
       margin: 0 auto;
-      animation: fadeInUp 0.4s cubic-bezier(0.2, 0, 0, 1) both;
+      animation: fadeInUp 0.5s cubic-bezier(0.2, 0, 0, 1) both;
     }
 
     .eyebrow {
-      font-size: .7rem;
-      letter-spacing: .14em;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--rain);
       font-weight: 700;
-      margin-bottom: .25rem;
+      margin-bottom: 0.25rem;
     }
 
     h1 {
@@ -93,14 +125,14 @@
 
     header p {
       color: var(--muted);
-      margin: .2rem 0 0;
-      font-size: .82rem;
+      margin: 0.2rem 0 0;
+      font-size: 0.82rem;
       max-width: 520px;
     }
 
     .header-actions {
       display: flex;
-      gap: .6rem;
+      gap: 0.6rem;
       align-items: center;
       flex-wrap: wrap;
       width: 100%;
@@ -112,6 +144,9 @@
       }
     }
 
+    /* ==========================================================================
+       Search Input & Dropdown
+       ========================================================================== */
     .search-wrapper {
       position: relative;
       min-width: 240px;
@@ -135,7 +170,7 @@
       stroke-linecap: round;
       stroke-linejoin: round;
       pointer-events: none;
-      transition: stroke 0.2s ease;
+      transition: stroke 0.3s ease, transform 0.3s ease;
     }
 
     .search-input {
@@ -143,11 +178,11 @@
       background: var(--panel2);
       border: 1px solid var(--line);
       color: var(--text);
-      padding: .6rem 2.2rem .6rem 2.4rem;
+      padding: 0.6rem 4.5rem 0.6rem 2.4rem;
       border-radius: 8px;
-      font-size: .85rem;
+      font-size: 0.85rem;
       outline: none;
-      transition: all 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
     }
 
     .search-input:focus {
@@ -158,122 +193,185 @@
 
     .search-input:focus + .search-icon-svg {
       stroke: var(--rain);
+      transform: scale(1.1);
+    }
+
+    .search-actions-right {
+      position: absolute;
+      right: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.1rem;
+    }
+
+    .location-btn, 
+    .search-clear-btn {
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      padding: 0;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .location-btn:hover, 
+    .search-clear-btn:hover {
+      background-color: var(--line);
+      transform: scale(1.05);
+    }
+    
+    .location-btn:active, 
+    .search-clear-btn:active {
+      transform: scale(0.95);
+    }
+
+    .location-icon-svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: var(--muted);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.2s ease;
+    }
+
+    .location-btn:hover .location-icon-svg {
+      stroke: var(--rain);
     }
 
     .search-clear-btn {
-      position: absolute;
-      right: 0.65rem;
-      background: none;
-      border: none;
       color: var(--muted);
       font-size: 0.85rem;
       font-weight: bold;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      padding: 0;
-      transition: color 0.2s ease, background-color 0.2s ease;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.8);
+      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .search-clear-btn.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: scale(1);
     }
 
     .search-clear-btn:hover {
       color: var(--text);
-      background-color: var(--line);
-    }
-
-    .search-clear-btn.active {
-      display: flex;
     }
 
     .search-dropdown {
       position: absolute;
-      top: calc(100% + 6px);
+      top: calc(100% + 8px);
       left: 0;
       right: 0;
       background: var(--panel2);
       border: 1px solid var(--line);
       border-radius: 8px;
-      overflow: hidden;
       z-index: 2000;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
-      display: none;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
       max-height: 260px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px) scale(0.98);
+      transform-origin: top center;
+      transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1), 
+                  transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                  visibility 0.3s;
     }
 
     .search-dropdown::-webkit-scrollbar {
       width: 6px;
     }
-
+    
     .search-dropdown::-webkit-scrollbar-track {
       background: var(--panel2);
     }
-
+    
     .search-dropdown::-webkit-scrollbar-thumb {
       background: var(--line);
       border-radius: 3px;
     }
 
     .search-dropdown.active {
-      display: block;
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
     }
 
     .search-item {
-      padding: .75rem .85rem;
-      font-size: .82rem;
+      padding: 0.75rem 0.85rem;
+      font-size: 0.82rem;
       cursor: pointer;
       border-bottom: 1px solid var(--line);
       display: flex;
       flex-direction: column;
-      transition: background 0.15s ease, color 0.15s ease;
+      transition: background 0.2s ease, padding-left 0.2s ease;
     }
 
     .search-item:last-child {
       border-bottom: none;
     }
 
-    .search-item:hover, .search-item:active {
+    .search-item:hover, 
+    .search-item:active {
       background: #152A38;
-      color: var(--rain);
+      padding-left: 1.2rem;
     }
 
     .search-item-name {
       font-weight: 600;
+      color: var(--text);
+      transition: color 0.2s ease;
     }
-
+    
+    .search-item:hover .search-item-name {
+      color: var(--rain);
+    }
+    
     .search-item-meta {
-      font-size: .7rem;
+      font-size: 0.7rem;
       color: var(--muted);
-      margin-top: .15rem;
+      margin-top: 0.15rem;
     }
 
     .refresh {
       background: var(--panel2);
       border: 1px solid var(--line);
       color: var(--text);
-      padding: .6rem .95rem;
+      padding: 0.6rem 0.95rem;
       border-radius: 8px;
-      font-size: .8rem;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       touch-action: manipulation;
     }
 
     .refresh:hover {
       border-color: var(--rain);
       color: var(--rain);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 163, 209, 0.15);
     }
 
     .refresh:active {
-      transform: scale(0.96) translateY(0);
+      transform: scale(0.95) translateY(0);
+      box-shadow: none;
     }
 
+    /* ==========================================================================
+       Layout Structure (Main, Rows)
+       ========================================================================== */
     main {
       position: relative;
       z-index: 1;
@@ -284,14 +382,15 @@
 
     .status {
       color: var(--muted);
-      font-size: .76rem;
-      margin-bottom: .7rem;
+      font-size: 0.76rem;
+      margin-bottom: 0.7rem;
+      transition: opacity 0.3s ease;
     }
 
     .row {
       display: grid;
-      gap: .75rem;
-      margin-bottom: .75rem;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
     }
 
     .row-cities {
@@ -322,17 +421,20 @@
       grid-template-columns: repeat(3, 1fr);
     }
 
+    /* ==========================================================================
+       Tiles & Core Components
+       ========================================================================== */
     .tile {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 12px;
-      padding: .85rem 1rem;
+      padding: 0.85rem 1rem;
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      animation: fadeInUp 0.45s cubic-bezier(0.2, 0, 0, 1) both;
-      transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+      animation: fadeInUp 0.5s cubic-bezier(0.2, 0, 0, 1) both;
+      transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
     }
 
     .tile:hover {
@@ -340,17 +442,17 @@
     }
 
     .tile-label {
-      font-size: .66rem;
+      font-size: 0.66rem;
       text-transform: uppercase;
-      letter-spacing: .06em;
+      letter-spacing: 0.06em;
       color: var(--muted);
       font-weight: 700;
-      margin-bottom: .4rem;
+      margin-bottom: 0.4rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: .5rem;
+      gap: 0.5rem;
     }
 
     .tile-label a {
@@ -364,8 +466,11 @@
       color: var(--rain);
     }
 
+    /* ==========================================================================
+       City Tiles
+       ========================================================================== */
     .tile-city {
-      padding: .75rem .85rem;
+      padding: 0.75rem 0.85rem;
       cursor: pointer;
       user-select: none;
       touch-action: manipulation;
@@ -373,8 +478,13 @@
 
     .tile-city:hover {
       border-color: var(--rain);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    
+    .tile-city:active {
+      transform: translateY(-1px) scale(0.98);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .tile-city.expanded {
@@ -383,7 +493,8 @@
       border-color: var(--rain);
       z-index: 10;
       transform: none !important;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      cursor: default;
     }
 
     .search-preview-slot {
@@ -393,43 +504,55 @@
     .tile-city.preview-card {
       border: 1px dashed var(--rain);
       background: rgba(26, 35, 46, 0.95);
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
     .add-city-btn {
       background: var(--rain);
       color: #0F151C;
       border: none;
-      padding: .35rem .75rem;
+      padding: 0.35rem 0.75rem;
       border-radius: 6px;
-      font-size: .72rem;
+      font-size: 0.72rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       touch-action: manipulation;
     }
 
-    .add-city-btn:hover, .add-city-btn:active {
+    .add-city-btn:hover {
       filter: brightness(1.15);
-      transform: scale(1.02);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79,163,209,0.3);
+    }
+    
+    .add-city-btn:active {
+      transform: translateY(0) scale(0.95);
+      box-shadow: none;
     }
 
     .close-preview-btn {
       background: var(--panel);
       border: 1px solid var(--line);
       color: var(--muted);
-      padding: .35rem .75rem;
+      padding: 0.35rem 0.75rem;
       border-radius: 6px;
-      font-size: .72rem;
+      font-size: 0.72rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       touch-action: manipulation;
     }
 
-    .close-preview-btn:hover, .close-preview-btn:active {
+    .close-preview-btn:hover {
       color: var(--text);
       border-color: var(--red);
       background: rgba(214, 82, 78, 0.15);
+      transform: translateY(-2px);
+    }
+    
+    .close-preview-btn:active {
+      transform: translateY(0) scale(0.95);
     }
 
     .tile-city .bar {
@@ -438,13 +561,13 @@
       top: 0;
       bottom: 0;
       width: 4px;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.4s ease;
     }
 
     .cityname {
       font-weight: 600;
-      font-size: .85rem;
-      margin-bottom: .05rem;
+      font-size: 0.85rem;
+      margin-bottom: 0.05rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -453,31 +576,40 @@
     .cityname-right {
       display: flex;
       align-items: center;
-      gap: .4rem;
+      gap: 0.4rem;
     }
 
     .remove-city-btn {
       background: none;
       border: none;
       color: var(--muted);
-      font-size: .9rem;
+      font-size: 0.9rem;
       cursor: pointer;
-      padding: .2rem .4rem;
+      padding: 0.2rem 0.4rem;
       line-height: 1;
-      transition: color 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       touch-action: manipulation;
     }
 
-    .remove-city-btn:hover, .remove-city-btn:active {
+    .remove-city-btn:hover {
       color: var(--red);
+      transform: scale(1.2);
+    }
+    
+    .remove-city-btn:active {
+      transform: scale(0.9);
     }
 
     .cityname .toggle-icon {
-      font-size: .7rem;
+      font-size: 0.7rem;
       color: var(--muted);
-      transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1), color 0.2s ease;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
     }
 
+    .tile-city:hover .toggle-icon {
+      color: var(--text);
+    }
+    
     .tile-city.expanded .cityname .toggle-icon {
       transform: rotate(180deg);
       color: var(--rain);
@@ -485,14 +617,14 @@
 
     .citymeta {
       color: var(--muted);
-      font-size: .7rem;
-      margin-bottom: .4rem;
+      font-size: 0.7rem;
+      margin-bottom: 0.4rem;
     }
 
     .rainrow {
       display: flex;
       align-items: baseline;
-      gap: .3rem;
+      gap: 0.3rem;
       margin-top: auto;
     }
 
@@ -501,64 +633,72 @@
       font-weight: 700;
       transition: color 0.3s ease;
     }
-
+    
     .rainunit {
       color: var(--muted);
-      font-size: .68rem;
+      font-size: 0.68rem;
     }
 
     .city-details {
       max-height: 0;
+      opacity: 0;
       overflow: hidden;
-      transition: max-height 0.4s cubic-bezier(0.2, 0, 0, 1), margin-top 0.4s cubic-bezier(0.2, 0, 0, 1), padding-top 0.4s cubic-bezier(0.2, 0, 0, 1);
+      transition: max-height 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                  opacity 0.3s ease, 
+                  margin-top 0.3s ease, 
+                  padding-top 0.3s ease;
       margin-top: 0;
       padding-top: 0;
       border-top: 1px solid transparent;
-      font-size: .78rem;
+      font-size: 0.78rem;
       color: var(--muted);
     }
 
     .tile-city.expanded .city-details {
-      max-height: 320px;
-      margin-top: .8rem;
-      padding-top: .8rem;
+      max-height: 350px;
+      opacity: 1;
+      margin-top: 0.8rem;
+      padding-top: 0.8rem;
       border-top-color: var(--line);
     }
 
     .uulan-verdict {
       background: var(--panel);
       border-left: 3px solid var(--rain);
-      padding: .65rem .85rem;
+      padding: 0.65rem 0.85rem;
       border-radius: 6px;
-      font-size: .85rem;
+      font-size: 0.85rem;
       font-weight: 600;
-      margin-bottom: .8rem;
+      margin-bottom: 0.8rem;
       color: var(--text);
     }
 
     .hourly-title {
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: .05em;
-      font-size: .65rem;
-      margin-bottom: .5rem;
+      letter-spacing: 0.05em;
+      font-size: 0.65rem;
+      margin-bottom: 0.5rem;
       color: var(--rain);
     }
 
     .hourly-table {
       display: flex;
       flex-direction: column;
-      gap: .35rem;
+      gap: 0.35rem;
     }
 
     .hourly-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: .3rem 0;
+      padding: 0.3rem 0;
       border-bottom: 1px solid var(--line);
     }
 
+    /* ==========================================================================
+       Satellite Tile
+       ========================================================================== */
     .tile-sat {
       padding: 0;
       height: 520px;
@@ -566,7 +706,7 @@
     }
 
     .tile-sat .tile-label {
-      padding: .65rem .9rem .25rem;
+      padding: 0.65rem 0.9rem 0.25rem;
       margin-bottom: 0;
     }
 
@@ -576,15 +716,16 @@
       object-fit: contain;
       background: var(--bg);
       min-height: 0;
+      transition: opacity 0.3s ease;
     }
 
     .satloopbar {
       display: flex;
       flex-direction: column;
-      gap: .4rem;
-      padding: .6rem .85rem .85rem;
+      gap: 0.4rem;
+      padding: 0.6rem 0.85rem 0.85rem;
       border-top: 1px solid var(--line);
-      font-size: .7rem;
+      font-size: 0.7rem;
       color: var(--muted);
       background: var(--panel2);
       border-bottom-left-radius: 11px;
@@ -599,7 +740,7 @@
 
     .sat-slider-container {
       width: 100%;
-      padding: .2rem 0 .15rem;
+      padding: 0.2rem 0 0.15rem;
       display: flex;
       align-items: center;
     }
@@ -608,17 +749,31 @@
       background: var(--panel);
       border: 1px solid var(--line);
       color: var(--text);
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       cursor: pointer;
-      font-size: .75rem;
+      font-size: 0.75rem;
       display: flex;
       align-items: center;
       justify-content: center;
       touch-action: manipulation;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
+    .satplay:hover {
+      border-color: var(--rain);
+      color: var(--rain);
+      transform: scale(1.1);
+    }
+
+    .satplay:active {
+      transform: scale(0.9);
+    }
+
+    /* ==========================================================================
+       Radar Tile & Controls
+       ========================================================================== */
     .tile-radar {
       padding: 0;
       height: clamp(480px, 80vh, 640px);
@@ -627,7 +782,7 @@
     }
 
     .tile-radar .tile-label {
-      padding: .65rem .9rem .35rem;
+      padding: 0.65rem 0.9rem 0.35rem;
       margin-bottom: 0;
       flex-shrink: 0;
     }
@@ -639,10 +794,9 @@
     }
 
     .radar-controls-embedded {
-      padding: .6rem .85rem .75rem;
+      padding: 0.6rem 0.85rem 0.75rem;
       border-top: 1px solid var(--line);
       background: var(--panel2);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       flex-shrink: 0;
       border-bottom-left-radius: 11px;
       border-bottom-right-radius: 11px;
@@ -652,13 +806,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: .4rem;
-      gap: .5rem;
+      margin-bottom: 0.4rem;
+      gap: 0.5rem;
       flex-wrap: wrap;
     }
 
     .controls-time {
-      font-size: .82rem;
+      font-size: 0.82rem;
       font-weight: 700;
       color: var(--text);
     }
@@ -666,12 +820,12 @@
     .controls-live {
       color: var(--rain);
       font-weight: 700;
-      font-size: .72rem;
+      font-size: 0.72rem;
     }
 
     .radar-slider-container {
-      margin-top: .5rem;
-      padding: .2rem 0;
+      margin-top: 0.5rem;
+      padding: 0.2rem 0;
     }
 
     .radar-slider {
@@ -683,6 +837,11 @@
       -webkit-appearance: none;
       accent-color: var(--rain);
       cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .radar-slider:hover {
+      background: #3b4d5e;
     }
 
     .radar-slider::-webkit-slider-thumb {
@@ -692,34 +851,39 @@
       border-radius: 50%;
       background: var(--rain);
       cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .radar-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
     }
 
     .controls-grid {
       display: grid;
       grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
-      gap: .5rem;
+      gap: 0.5rem;
       align-items: flex-start;
-      margin-bottom: .4rem;
+      margin-bottom: 0.4rem;
     }
 
     .controls-group {
       display: flex;
       flex-direction: column;
-      gap: .25rem;
+      gap: 0.25rem;
     }
 
     .controls-groupname {
       display: block;
-      font-size: .6rem;
+      font-size: 0.6rem;
       text-transform: uppercase;
-      letter-spacing: .06em;
+      letter-spacing: 0.06em;
       color: var(--muted);
       font-weight: 700;
     }
 
     .segbtns {
       display: flex;
-      gap: .25rem;
+      gap: 0.25rem;
       flex-wrap: wrap;
     }
 
@@ -727,18 +891,23 @@
       background: var(--panel);
       border: 1px solid var(--line);
       color: var(--muted);
-      font-size: .7rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      padding: .3rem .55rem;
+      padding: 0.3rem 0.55rem;
       border-radius: 6px;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       touch-action: manipulation;
     }
 
-    .segbtn:hover, .segbtn:active {
+    .segbtn:hover {
       border-color: var(--rain);
       color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .segbtn:active {
+      transform: scale(0.95);
     }
 
     .segbtn.active {
@@ -751,16 +920,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: .4rem;
-      padding-top: .4rem;
+      gap: 0.4rem;
+      padding-top: 0.4rem;
       border-top: 1px solid var(--line);
     }
 
     .controls-endlabel {
-      font-size: .6rem;
+      font-size: 0.6rem;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: .05em;
+      letter-spacing: 0.05em;
       font-weight: 700;
     }
 
@@ -768,18 +937,24 @@
       background: var(--panel);
       border: 1px solid var(--line);
       color: var(--text);
-      font-size: .72rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      padding: .35rem .75rem;
+      padding: 0.35rem 0.75rem;
       border-radius: 6px;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       touch-action: manipulation;
     }
 
-    .transportbtn:hover, .transportbtn:active {
+    .transportbtn:hover {
       border-color: var(--rain);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(79, 163, 209, 0.15);
+    }
+
+    .transportbtn:active {
+      transform: scale(0.95) translateY(0);
+      box-shadow: none;
     }
 
     .transportbtn.play {
@@ -789,19 +964,21 @@
       min-width: 80px;
     }
 
+    /* Radar Legend Overlay */
     .radar-legend {
       position: absolute;
       top: 8px;
       left: 8px;
       z-index: 1000;
-      background: rgba(15, 21, 28, .92);
+      background: rgba(15, 21, 28, 0.92);
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: .8rem .7rem;
+      padding: 0.8rem 0.7rem;
       display: flex;
       justify-content: center;
       box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(5px);
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
     .legend-wrapper {
@@ -813,19 +990,23 @@
 
     .legend-bar-center {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       border: 1px solid #fff;
     }
 
     .legend-block-layer {
       position: absolute;
-      left: 0; right: 0;
+      left: 0;
+      right: 0;
     }
 
     .legend-label {
       position: absolute;
       color: var(--text);
-      font-size: .68rem;
+      font-size: 0.68rem;
       font-weight: 700;
       line-height: 1;
       white-space: nowrap;
@@ -833,30 +1014,50 @@
       transform: translateY(50%);
     }
 
-    .legend-label.left { right: 100%; margin-right: 8px; }
-    .legend-label.right { left: 100%; margin-left: 8px; }
+    .legend-label.left {
+      right: 100%;
+      margin-right: 8px;
+    }
+
+    .legend-label.right {
+      left: 100%;
+      margin-left: 8px;
+    }
 
     .radar-overlay-img {
       image-rendering: pixelated;
       image-rendering: crisp-edges;
+      transition: opacity 0.2s ease;
     }
 
     .basemap-contrast {
       filter: brightness(1.25) contrast(1.15);
     }
 
+    /* Live Dot Status Indicators */
     .livedot {
-      width: 6px;
-      height: 6px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: #5EAE6A;
       display: inline-block;
-      margin-right: 5px;
+      margin-right: 6px;
+      animation: pulseGreen 2s infinite;
     }
 
-    .livedot.down { background: #D6524E; }
-    .livedot.checking { background: #8FA1B0; }
+    .livedot.down {
+      background: #D6524E;
+      animation: pulseRed 2s infinite;
+    }
 
+    .livedot.checking {
+      background: #8FA1B0;
+      animation: none;
+    }
+
+    /* ==========================================================================
+       Advisory & External Links
+       ========================================================================== */
     .tile-advisory {
       padding: 0;
       height: 520px;
@@ -865,7 +1066,7 @@
     }
 
     .tile-advisory .tile-label {
-      padding: .65rem .9rem .25rem;
+      padding: 0.65rem 0.9rem 0.25rem;
       margin-bottom: 0;
       flex-shrink: 0;
     }
@@ -879,7 +1080,7 @@
       overflow: hidden;
     }
 
-    #pagasa-pdf-container iframe,
+    #pagasa-pdf-container iframe, 
     #pagasa-pdf-container embed {
       width: 100%;
       height: 100%;
@@ -890,8 +1091,8 @@
     .classrow {
       display: flex;
       align-items: flex-start;
-      gap: .6rem;
-      padding: .55rem 0;
+      gap: 0.6rem;
+      padding: 0.55rem 0;
       border-bottom: 1px solid var(--line);
     }
 
@@ -900,36 +1101,84 @@
       height: 9px;
       border-radius: 50%;
       flex-shrink: 0;
-      margin-top: .3rem;
+      margin-top: 0.3rem;
     }
 
-    .classtext { display: flex; flex-direction: column; }
-    .classname { font-weight: 600; font-size: .8rem; }
-    .classaction { color: var(--muted); font-size: .72rem; margin-top: .1rem; }
+    .classtext {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .classname {
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .classaction {
+      color: var(--muted);
+      font-size: 0.72rem;
+      margin-top: 0.1rem;
+    }
 
     .classsection {
-      font-size: .66rem;
+      font-size: 0.66rem;
       text-transform: uppercase;
-      letter-spacing: .06em;
+      letter-spacing: 0.06em;
       color: var(--muted);
       font-weight: 700;
-      margin: .7rem 0 .3rem;
-      padding-top: .5rem;
+      margin: 0.7rem 0 0.3rem;
+      padding-top: 0.5rem;
       border-top: 1px solid var(--line);
     }
 
-    .classsection-first { margin-top: 0; padding-top: 0; border-top: none; }
+    .classsection-first {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
 
-    .tile-hrw { padding: 0; height: auto; }
-    .tile-hrw .tile-label { padding: .65rem .9rem .25rem; margin-bottom: 0; }
-    .tile-criteria { align-self: start; animation: none !important; }
+    .tile-hrw {
+      padding: 0;
+      height: auto;
+    }
 
+    .tile-hrw .tile-label {
+      padding: 0.65rem 0.9rem 0.25rem;
+      margin-bottom: 0;
+    }
+
+    .tile-criteria {
+      align-self: start;
+      animation: none !important;
+    }
+
+    /* ==========================================================================
+       Changelog Section
+       ========================================================================== */
     .changelog-content {
       font-size: 0.78rem;
       color: var(--muted);
       border-top: 1px solid var(--line);
       padding-top: 0.75rem;
       margin-top: 0.5rem;
+      animation: fadeInUp 0.4s ease both;
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+    
+    .changelog-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .changelog-content::-webkit-scrollbar-track {
+      background: var(--panel);
+      border-radius: 3px;
+    }
+
+    .changelog-content::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 3px;
     }
 
     .version-block {
@@ -976,36 +1225,98 @@
       background: var(--panel2);
       border-left: 3px solid var(--amber);
       border-radius: 8px;
-      padding: .75rem .85rem;
-      font-size: .78rem;
+      padding: 0.75rem 0.85rem;
+      font-size: 0.78rem;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
     }
 
-    .linkitem a { color: var(--rain); text-decoration: none; }
-    .linkitem a:hover { text-decoration: underline; }
-    .linkitem .tag { display: block; font-size: .63rem; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .25rem; }
+    .linkitem:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+      border-left-color: var(--rain);
+    }
+
+    .linkitem a {
+      color: var(--rain);
+      text-decoration: none;
+    }
+
+    .linkitem a:hover {
+      text-decoration: underline;
+    }
+
+    .linkitem .tag {
+      display: block;
+      font-size: 0.63rem;
+      font-weight: 700;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+      transition: color 0.3s ease;
+    }
+
+    .linkitem:hover .tag {
+      color: var(--rain);
+    }
 
     footer {
       text-align: center;
       color: var(--muted);
-      font-size: .7rem;
+      font-size: 0.7rem;
       padding: 1.4rem;
       border-top: 1px solid var(--line);
       max-width: 1280px;
       margin: 0 auto;
     }
 
+    /* ==========================================================================
+       Responsive / Mobile Adjustments
+       ========================================================================== */
     @media (max-width: 900px) {
-      header { padding: 1rem 1.1rem .8rem; }
-      main { padding: 0.9rem 1.1rem 2.5rem; }
-      .row-2col, .row-8-4, .row-3col { grid-template-columns: 1fr; }
-      .tile-radar { height: clamp(440px, 75vh, 580px); }
-      .tile-sat, .tile-advisory { height: 460px; }
-      .controls-grid { grid-template-columns: 1fr 1fr; gap: .6rem; }
-      .radar-legend { padding: .6rem .5rem; top: 6px; left: 6px; }
-      .legend-wrapper { height: 140px !important; font-size: 9px !important; margin: 0 3.8rem 0 2rem !important; }
-      .search-wrapper { min-width: 100%; }
-      .transportbtn { padding: .45rem .85rem; font-size: .75rem; }
-      .segbtn { padding: .4rem .65rem; font-size: .75rem; }
+      header {
+        padding: 1rem 1.1rem 0.8rem;
+      }
+      main {
+        padding: 0.9rem 1.1rem 2.5rem;
+      }
+      .row-2col, 
+      .row-8-4, 
+      .row-3col {
+        grid-template-columns: 1fr;
+      }
+      .tile-radar {
+        height: clamp(440px, 75vh, 580px);
+      }
+      .tile-sat, 
+      .tile-advisory {
+        height: 460px;
+      }
+      .controls-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+      }
+      .radar-legend {
+        padding: 0.6rem 0.5rem;
+        top: 6px;
+        left: 6px;
+      }
+      .legend-wrapper {
+        height: 140px !important;
+        font-size: 9px !important;
+        margin: 0 3.8rem 0 2rem !important;
+      }
+      .search-wrapper {
+        min-width: 100%;
+      }
+      .transportbtn {
+        padding: 0.45rem 0.85rem;
+        font-size: 0.75rem;
+      }
+      .segbtn {
+        padding: 0.4rem 0.65rem;
+        font-size: 0.75rem;
+      }
     }
   </style>
 </head>
@@ -1013,7 +1324,7 @@
 
   <header>
     <div>
-      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.4.3</div>
+      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.4.6</div>
       <h1>Uulan Ba?</h1>
       <p>Philippines Weather and Rain Dashboard.</p>
     </div>
@@ -1025,7 +1336,19 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <button type="button" id="searchClearBtn" class="search-clear-btn" aria-label="Clear search">✕</button>
+          <div class="search-actions-right">
+            <button type="button" id="geoLocateBtn" class="location-btn" title="Use my current location" aria-label="Use my current location">
+              <svg class="location-icon-svg" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="7"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+                <line x1="12" y1="2" x2="12" y2="5"></line>
+                <line x1="12" y1="19" x2="12" y2="22"></line>
+                <line x1="2" y1="12" x2="5" y2="12"></line>
+                <line x1="19" y1="12" x2="22" y2="12"></line>
+              </svg>
+            </button>
+            <button type="button" id="searchClearBtn" class="search-clear-btn" aria-label="Clear search">✕</button>
+          </div>
         </div>
         <div id="searchResults" class="search-dropdown"></div>
       </div>
@@ -1043,7 +1366,7 @@
     <div class="row row-2col">
       <div class="tile tile-sat">
         <div class="tile-label">
-          <span><span class="livedot" id="dot-sat" title="Connection status"></span>Satellite &middot; Himawari IR (PAGASA)</span>
+          <span><span class="livedot checking" id="dot-sat" title="Connection status"></span>Satellite &middot; Himawari IR (PAGASA)</span>
           <div style="display: flex; align-items: center; gap: .75rem;">
             <span id="satstamp" style="font-weight:600;"></span>
           </div>
@@ -1075,7 +1398,7 @@
     <div class="row row-1col">
       <div class="tile tile-radar">
         <div class="tile-label">
-          <span id="radarTileTitle"><span class="livedot" id="dot-radar" title="Connection status"></span>Live radar &middot; dBZ reflectivity (source: PAGASA, processed HERE)</span>
+          <span id="radarTileTitle"><span class="livedot checking" id="dot-radar" title="Connection status"></span>Live radar &middot; dBZ reflectivity (source: PAGASA, processed HERE)</span>
           <div>
             <button id="radarRecenter" class="segbtn" title="Recenter map to PH">Recenter Map</button>
           </div>
@@ -1126,7 +1449,7 @@
           <div class="controls-transport">
             <span class="controls-endlabel">Oldest</span>
             <button id="radarStepBack" class="transportbtn" title="Step back (&larr;)">&lsaquo; Step</button>
-            <button id="radarPlayBig" class="transportbtn play" title="Play/Pause (Space)">&#9654; Play</button>
+            <button id="radarPlayBig" class="transportbtn play" title="Play/Pause (Space)">⏸ Pause</button>
             <button id="radarStepFwd" class="transportbtn" title="Step forward (&rsaquo;)">Step &rsaquo;</button>
             <span class="controls-endlabel">Newest</span>
           </div>
@@ -1173,8 +1496,32 @@
         <div id="changelogContent" class="changelog-content" style="display: none;">
           <div class="version-block">
             <div class="version-tag">
-              v2.4.3 <span class="version-badge-curr">Current</span>
+              v2.5.2 <span class="version-badge-curr">Current</span>
             </div>
+            <ul class="version-list">
+              <li><strong>UI Sync Fix:</strong> Updated the hardcoded HTML for the radar play button to read "⏸ Pause" on initial load to match the auto-playing JavaScript state.</li>
+            </ul>
+          </div>
+          
+          <div class="version-block">
+            <div class="version-tag">v2.5.1</div>
+            <ul class="version-list">
+              <li><strong>Refined Search Icon:</strong> Replaced the standard emoji magnifying glass in the search preview card with a crisp, matching vector SVG icon.</li>
+              <li><strong>Fluid Animation Pass:</strong> Overhauled animation timings across the dashboard utilizing custom spring-like easing curves (cubic-bezier) for hovers, button clicks, and dropdown expansions, giving the interface a more tactile and premium feel.</li>
+              <li><strong>Live Status Pulses:</strong> Added a subtle pulsing animation to the green/red connection dots indicating when radar and satellite streams are active and live.</li>
+            </ul>
+          </div>
+          
+          <div class="version-block">
+            <div class="version-tag">v2.5.0</div>
+            <ul class="version-list">
+              <li><strong>My Location Finder:</strong> Added an aesthetic geolocation button in the search bar to automatically detect and preview your current weather.</li>
+              <li><strong>Philippines Only Search:</strong> Refined the geocoding search API to strictly return locations and towns within the Philippines.</li>
+            </ul>
+          </div>
+
+          <div class="version-block">
+            <div class="version-tag">v2.4.0</div>
             <ul class="version-list">
               <li><strong>Search Preview Close Button:</strong> Added a dedicated "✕ Close" button beside the "＋ Add to Cities" button in the search result preview card for easy dismissal.</li>
               <li><strong>In-App Patch Notes:</strong> Integrated an interactive version history panel directly into the site dashboard.</li>
@@ -1183,7 +1530,7 @@
           </div>
 
           <div class="version-block">
-            <div class="version-tag">v2.4.2 — Mobile Optimization Pass</div>
+            <div class="version-tag">v2.3.1 — Mobile Optimization Pass</div>
             <ul class="version-list">
               <li><strong>Touch Target Scaling:</strong> Enlarged interactive control targets across satellite scrubbers, radar playback buttons, and town search dropdowns for touchscreens.</li>
               <li><strong>Mobile Viewport & Overflow Tweaks:</strong> Prevented unintended horizontal scrolling and enhanced map touch gesture responsiveness on mobile viewports.</li>
@@ -1191,7 +1538,7 @@
           </div>
 
           <div class="version-block">
-            <div class="version-tag">v2.4.1 — Search-to-Grid Expansion & Cross-Platform PDF Engine</div>
+            <div class="version-tag">v2.3.0 — Search-to-Grid Expansion & Cross-Platform PDF Engine</div>
             <ul class="version-list">
               <li><strong>Auto-Expanding Search Preview:</strong> Selecting a searched town instantly fetches live weather data, auto-expands a preview tile, and provides an "＋ Add to Cities" button.</li>
               <li><strong>Aesthetic Vector Search Icon:</strong> Replaced standard text characters with a custom inline vector SVG search icon.</li>
@@ -1200,21 +1547,21 @@
           </div>
 
           <div class="version-block">
-            <div class="version-tag">v2.4.0 — Geocoding Search Integration</div>
+            <div class="version-tag">v2.2.0 — Geocoding Search Integration</div>
             <ul class="version-list">
               <li><strong>Location Lookup:</strong> Integrated Open-Meteo's Geocoding API to let users query any town or municipality across the Philippines.</li>
             </ul>
           </div>
 
           <div class="version-block">
-            <div class="version-tag">v2.3.1 — Control & Interface Optimizations</div>
+            <div class="version-tag">v2.1.1 — Control & Interface Optimizations</div>
             <ul class="version-list">
               <li><strong>Control Fine-Tuning:</strong> Streamlined and optimized user controls across the radar timeline playback, satellite loop scrubber, and dashboard navigation buttons.</li>
             </ul>
           </div>
 
           <div class="version-block">
-            <div class="version-tag">v2.3.0 — Interactive Cards & Custom City Management</div>
+            <div class="version-tag">v2.1.0 — Interactive Cards & Custom City Management</div>
             <ul class="version-list">
               <li><strong>Expandable City Cards:</strong> Added animated card expansion powered by the View Transitions API.</li>
               <li><strong>"Uulan Ba?" Verdicts:</strong> Automated smart advice based on hourly precipitation probability and intensity.</li>
@@ -1298,9 +1645,16 @@
       }
       
       const previewSlot = document.getElementById('search-preview-slot');
-      if (previewSlot) previewSlot.innerHTML = '';
+      if (previewSlot) {
+        previewSlot.style.opacity = '0';
+        setTimeout(() => { 
+          previewSlot.innerHTML = ''; 
+          previewSlot.style.opacity = '1'; 
+        }, 300);
+      }
       
       loadRain();
+      
       if (window.leafletMap) {
         window.leafletMap.flyTo([city.lat, city.lon], 9, { duration: 1.2 });
       }
@@ -1319,6 +1673,7 @@
     }
 
     function classify(mmhr) {
+      if (!mmhr || mmhr <= 0) return { label: "None", cls: "lvl-none" };
       if (mmhr < 7.5) return { label: "Advisory", cls: "lvl-adv-affecting" };
       if (mmhr < 15) return { label: "Yellow", cls: "lvl-heavy" };
       if (mmhr < 30) return { label: "Orange", cls: "lvl-intense" };
@@ -1341,6 +1696,7 @@
 
     function getUulanBaVerdict(prob, mmhr) {
       if (mmhr >= 15) return "🌧️ Oo, malakas ang ulan! Delikado sa baha, ingat sa labas.";
+      if (mmhr > 0) return "🌧️ Umuulan ngayon! Magdala ng payong at mag-ingat.";
       if (prob >= 80) return "☂️ Oo, siguradong uulan! Magdala ka na ng payong o kapote.";
       if (prob >= 50) return "⚠️ Baka umulan! Medyo alanganin ang panahon ngayon.";
       if (prob >= 20) return "🌤️ Mababa ang tyansa, pero pwede kang maambunan.";
@@ -1383,7 +1739,16 @@
             }
           }
 
-          return { name: c.name, lat: c.lat, lon: c.lon, isCustom: c.isCustom, precip, temp, hourly, maxProb };
+          return { 
+            name: c.name, 
+            lat: c.lat, 
+            lon: c.lon, 
+            isCustom: c.isCustom, 
+            precip, 
+            temp, 
+            hourly, 
+            maxProb 
+          };
         });
 
         cityDataList.sort((a, b) => b.precip - a.precip || b.maxProb - a.maxProb || a.name.localeCompare(b.name));
@@ -1437,7 +1802,10 @@
               </div>
             </div>
             <div class="citymeta">${res.temp !== undefined ? res.temp.toFixed(1) + '°C' : ''}</div>
-            <div class="rainrow"><span class="rainval">${res.precip.toFixed(1)}</span><span class="rainunit">mm/hr</span></div>
+            <div class="rainrow">
+              <span class="rainval">${res.precip.toFixed(1)}</span>
+              <span class="rainunit">mm/hr</span>
+            </div>
             ${hourlyHtml}
           `;
 
@@ -1480,7 +1848,7 @@
       const previewSlot = document.getElementById('search-preview-slot');
       if (!previewSlot) return;
 
-      previewSlot.innerHTML = `<div class="status">Fetching weather preview for ${city.name}…</div>`;
+      previewSlot.innerHTML = `<div class="status" style="animation: popIn 0.3s ease;">Fetching weather preview for ${city.name}…</div>`;
 
       try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&models=ecmwf_ifs025&current=precipitation,rain,temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation&timezone=Asia%2FManila`;
@@ -1527,7 +1895,13 @@
           <div class="tile tile-city preview-card expanded">
             <div class="bar" style="background:${barColor(info.cls)}"></div>
             <div class="cityname">
-              <span>🔍 ${city.name} <small style="font-weight:400; color:var(--muted); font-size: 0.7rem;">(Search Preview)</small></span>
+              <span style="display: flex; align-items: center; gap: 0.35rem;">
+                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                ${city.name} <small style="font-weight:400; color:var(--muted); font-size: 0.7rem;">(Search Preview)</small>
+              </span>
               <div class="cityname-right">
                 ${!isAlreadyAdded ? `<button class="add-city-btn" id="saveCityBtn">＋ Add to Cities</button>` : `<span style="font-size:0.7rem; color:var(--rain);">✓ Saved in list</span>`}
                 <button class="close-preview-btn" id="closePreviewBtn" title="Close preview">✕ Close</button>
@@ -1535,7 +1909,7 @@
             </div>
             <div class="citymeta">${temp !== undefined ? temp.toFixed(1) + '°C' : ''}</div>
             <div class="rainrow"><span class="rainval">${precip.toFixed(1)}</span><span class="rainunit">mm/hr</span></div>
-            <div class="city-details" style="max-height: 280px; margin-top: .8rem; padding-top: .8rem; border-top-color: var(--line);">
+            <div class="city-details" style="max-height: 280px; opacity: 1; margin-top: .8rem; padding-top: .8rem; border-top-color: var(--line);">
               <div class="city-details-inner">
                 <div class="uulan-verdict">${verdictText}</div>
                 <div class="hourly-title">Next 5 Hours Forecast</div>
@@ -1555,7 +1929,11 @@
         const closeBtn = document.getElementById('closePreviewBtn');
         if (closeBtn) {
           closeBtn.addEventListener('click', () => {
-            previewSlot.innerHTML = '';
+            previewSlot.style.opacity = '0';
+            setTimeout(() => { 
+              previewSlot.innerHTML = ''; 
+              previewSlot.style.opacity = '1'; 
+            }, 300);
           });
         }
 
@@ -1575,6 +1953,7 @@
       const searchInput = document.getElementById('citySearchInput');
       const searchResults = document.getElementById('searchResults');
       const searchClearBtn = document.getElementById('searchClearBtn');
+      const geoLocateBtn = document.getElementById('geoLocateBtn');
       let searchDebounce = null;
 
       if (!searchInput || !searchResults) return;
@@ -1582,15 +1961,64 @@
       function clearSearchState() {
         searchInput.value = '';
         searchResults.classList.remove('active');
-        searchResults.innerHTML = '';
+        
         if (searchClearBtn) searchClearBtn.classList.remove('active');
         const previewSlot = document.getElementById('search-preview-slot');
-        if (previewSlot) previewSlot.innerHTML = '';
+        if (previewSlot) {
+            previewSlot.style.opacity = '0';
+            setTimeout(() => { 
+              previewSlot.innerHTML = ''; 
+              previewSlot.style.opacity = '1'; 
+            }, 300);
+        }
         searchInput.focus();
       }
 
       if (searchClearBtn) {
         searchClearBtn.addEventListener('click', clearSearchState);
+      }
+
+      if (geoLocateBtn) {
+        geoLocateBtn.addEventListener('click', () => {
+          const previewSlot = document.getElementById('search-preview-slot');
+          if (!previewSlot) return;
+          
+          searchInput.value = '';
+          searchResults.classList.remove('active');
+          if (searchClearBtn) searchClearBtn.classList.remove('active');
+          
+          previewSlot.innerHTML = `<div class="status" style="animation: popIn 0.3s ease;">Detecting your location…</div>`;
+          previewSlot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+          if (!navigator.geolocation) {
+            previewSlot.innerHTML = `<div class="status">Geolocation is not supported by your browser.</div>`;
+            return;
+          }
+
+          navigator.geolocation.getCurrentPosition(async (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            let locName = "My Location";
+
+            try {
+              const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+              if (revRes.ok) {
+                const revData = await revRes.json();
+                locName = revData.locality || revData.city || revData.principalSubdivision || "My Location";
+              }
+            } catch (e) {
+              console.error("Reverse geocoding failed", e);
+            }
+
+            previewSearchedLocation({
+              name: locName,
+              lat: lat,
+              lon: lon
+            });
+          }, (err) => {
+            previewSlot.innerHTML = `<div class="status">Failed to get location. Please check browser permissions.</div>`;
+          }, { timeout: 10000 });
+        });
       }
 
       searchInput.addEventListener('keydown', (e) => {
@@ -1613,23 +2041,31 @@
 
         if (query.length < 2) {
           searchResults.classList.remove('active');
-          searchResults.innerHTML = '';
+          setTimeout(() => { 
+            if (!searchResults.classList.contains('active')) {
+              searchResults.innerHTML = ''; 
+            }
+          }, 300);
           return;
         }
 
         searchDebounce = setTimeout(async () => {
           try {
-            const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=6&language=en&format=json`;
+            const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=40&language=en&format=json`;
             const res = await fetch(url);
             const data = await res.json();
 
-            if (!data.results || data.results.length === 0) {
-              searchResults.innerHTML = `<div class="search-item" style="cursor:default; color:var(--muted);">No locations found</div>`;
+            const filteredResults = (data.results || [])
+              .filter(loc => loc.country_code === 'PH' || loc.country === 'Philippines')
+              .slice(0, 6);
+
+            if (filteredResults.length === 0) {
+              searchResults.innerHTML = `<div class="search-item" style="cursor:default; color:var(--muted);">No locations found in the Philippines</div>`;
               searchResults.classList.add('active');
               return;
             }
 
-            searchResults.innerHTML = data.results.map(loc => {
+            searchResults.innerHTML = filteredResults.map(loc => {
               const meta = [loc.admin1, loc.country].filter(Boolean).join(', ');
               return `
                 <div class="search-item" data-name="${loc.name.replace(/"/g, '&quot;')}" data-lat="${loc.latitude}" data-lon="${loc.longitude}">
@@ -1672,8 +2108,14 @@
     (function() {
       const img = document.getElementById('satimg');
       const dot = document.getElementById('dot-sat');
-      img.addEventListener('load', () => { dot.classList.remove('down', 'checking'); });
-      img.addEventListener('error', () => { dot.classList.remove('checking'); dot.classList.add('down'); });
+      img.addEventListener('load', () => { 
+        dot.classList.remove('down', 'checking'); 
+        dot.classList.add('livedot'); 
+      });
+      img.addEventListener('error', () => { 
+        dot.classList.remove('checking'); 
+        dot.classList.add('down'); 
+      });
     })();
 
     (function() {
@@ -1684,11 +2126,15 @@
       const stamp = document.getElementById('satstamp');
       const satSlider = document.getElementById('satSlider');
       const satFrameCounter = document.getElementById('satFrameCounter');
+      
       let frames = [];
       let idx = 0;
       let playing = true;
       let timer = null;
       let isDraggingSat = false;
+      
+      const FRAME_MS = 400;
+      const HOLD_LAST_MS = 2500;
 
       function probeFrame(n) {
         return new Promise(resolve => {
@@ -1709,14 +2155,24 @@
         if (frames.length <= 1) {
           playBtn.style.display = "none";
           if (frames.length === 1) img.src = frames[0];
-          if (satSlider) { satSlider.max = Math.max(0, frames.length - 1); satSlider.value = 0; }
-          if (satFrameCounter) { satFrameCounter.textContent = `Frame ${frames.length > 0 ? 1 : 0} / ${frames.length}`; }
+          if (satSlider) { 
+            satSlider.max = Math.max(0, frames.length - 1); 
+            satSlider.value = 0; 
+          }
+          if (satFrameCounter) { 
+            satFrameCounter.textContent = `Frame ${frames.length > 0 ? 1 : 0} / ${frames.length}`; 
+          }
           return;
         }
         playBtn.style.display = "flex";
         idx = frames.length - 1;
-        if (satSlider) { satSlider.max = frames.length - 1; satSlider.value = idx; }
-        if (satFrameCounter) { satFrameCounter.textContent = `Frame ${idx + 1} / ${frames.length}`; }
+        if (satSlider) { 
+          satSlider.max = frames.length - 1; 
+          satSlider.value = idx; 
+        }
+        if (satFrameCounter) { 
+          satFrameCounter.textContent = `Frame ${idx + 1} / ${frames.length}`; 
+        }
         if (playing) startLoop();
       }
 
@@ -1728,10 +2184,11 @@
         if (satFrameCounter) satFrameCounter.textContent = `Frame ${idx + 1} / ${frames.length}`;
       }
 
-      const FRAME_MS = 400;
-      const HOLD_LAST_MS = 2500;
-
-      function startLoop() { stopLoop(); scheduleNext(); }
+      function startLoop() { 
+        stopLoop(); 
+        scheduleNext(); 
+      }
+      
       function scheduleNext() {
         const atLast = idx === frames.length - 1;
         timer = setTimeout(() => {
@@ -1740,7 +2197,10 @@
         }, atLast ? HOLD_LAST_MS : FRAME_MS);
       }
 
-      function stopLoop() { if (timer) clearTimeout(timer); timer = null; }
+      function stopLoop() { 
+        if (timer) clearTimeout(timer); 
+        timer = null; 
+      }
 
       playBtn.addEventListener('click', () => {
         playing = !playing;
@@ -1749,10 +2209,24 @@
       });
 
       if (satSlider) {
-        satSlider.addEventListener('mousedown', () => { isDraggingSat = true; playing = false; playBtn.innerHTML = "&#9654;"; stopLoop(); });
-        satSlider.addEventListener('touchstart', () => { isDraggingSat = true; playing = false; playBtn.innerHTML = "&#9654;"; stopLoop(); });
-        window.addEventListener('mouseup', () => { isDraggingSat = false; });
-        window.addEventListener('touchend', () => { isDraggingSat = false; });
+        satSlider.addEventListener('mousedown', () => { 
+          isDraggingSat = true; 
+          playing = false; 
+          playBtn.innerHTML = "&#9654;"; 
+          stopLoop(); 
+        });
+        satSlider.addEventListener('touchstart', () => { 
+          isDraggingSat = true; 
+          playing = false; 
+          playBtn.innerHTML = "&#9654;"; 
+          stopLoop(); 
+        });
+        window.addEventListener('mouseup', () => { 
+          isDraggingSat = false; 
+        });
+        window.addEventListener('touchend', () => { 
+          isDraggingSat = false; 
+        });
 
         satSlider.addEventListener('input', (e) => {
           playing = false;
@@ -1817,7 +2291,11 @@
         window.leafletMap = map;
 
         L.control.zoom({ position: 'topright' }).addTo(map);
-        L.tileLayer(TILE_URL, { maxZoom: 22, maxNativeZoom: 19, className: 'basemap-contrast' }).addTo(map);
+        L.tileLayer(TILE_URL, { 
+          maxZoom: 22, 
+          maxNativeZoom: 19, 
+          className: 'basemap-contrast' 
+        }).addTo(map);
 
         let overlay = null;
         let opacityVal = 0.75;
@@ -1831,7 +2309,10 @@
             overlay.setUrl(url);
             overlay.setOpacity(opacityVal);
           } else {
-            overlay = L.imageOverlay(url, boundsToLatLngBounds(), { opacity: opacityVal, className: 'radar-overlay-img' }).addTo(map);
+            overlay = L.imageOverlay(url, boundsToLatLngBounds(), { 
+              opacity: opacityVal, 
+              className: 'radar-overlay-img' 
+            }).addTo(map);
           }
         }
 
@@ -1860,7 +2341,10 @@
         function buildFrameUrls() {
           const prefix = productPrefix(product);
           frames = rawFilenames.map(f => DATA_BASE + "/raw/" + prefix + "-" + f);
-          frames.forEach(src => { const img = new Image(); img.src = src; });
+          frames.forEach(src => { 
+            const img = new Image(); 
+            img.src = src; 
+          });
         }
 
         function formatFrameTime(filename) {
@@ -1897,17 +2381,26 @@
             buildFrameUrls();
             if (frames.length === 0) {
               liveFrameLabel.textContent = "Frame — / —";
-              if (radarDot) radarDot.className = "livedot down";
+              if (radarDot) { 
+                radarDot.classList.remove('checking', 'livedot'); 
+                radarDot.classList.add('down'); 
+              }
               return;
             }
-            if (radarDot) radarDot.className = "livedot";
+            if (radarDot) { 
+              radarDot.classList.remove('checking', 'down'); 
+              radarDot.classList.add('livedot'); 
+            }
             idx = frames.length - 1;
             showFrame(frames[idx]);
             updateLabels();
             if (playing) startLoop();
           } catch (e) {
             liveFrameLabel.textContent = "Frame error";
-            if (radarDot) radarDot.className = "livedot down";
+            if (radarDot) { 
+              radarDot.classList.remove('checking', 'livedot'); 
+              radarDot.classList.add('down'); 
+            }
           }
         }
 
@@ -1919,8 +2412,15 @@
           }, atLast ? HOLD_LAST_MS : frameDelay);
         }
 
-        function startLoop() { stopLoop(); scheduleNext(); }
-        function stopLoop() { if (timer) clearTimeout(timer); timer = null; }
+        function startLoop() { 
+          stopLoop(); 
+          scheduleNext(); 
+        }
+        
+        function stopLoop() { 
+          if (timer) clearTimeout(timer); 
+          timer = null; 
+        }
 
         function setPlaying(p) {
           playing = p;
@@ -1935,6 +2435,7 @@
           setPlaying(false);
           goToFrame(idx - 1);
         });
+        
         stepFwdBtn.addEventListener('click', () => {
           setPlaying(false);
           goToFrame(idx + 1);
@@ -1953,10 +2454,23 @@
           });
         }
 
-        radarSlider.addEventListener('mousedown', () => { isDraggingRadar = true; setPlaying(false); });
-        radarSlider.addEventListener('touchstart', () => { isDraggingRadar = true; setPlaying(false); });
-        window.addEventListener('mouseup', () => { isDraggingRadar = false; });
-        window.addEventListener('touchend', () => { isDraggingRadar = false; });
+        radarSlider.addEventListener('mousedown', () => { 
+          isDraggingRadar = true; 
+          setPlaying(false); 
+        });
+        
+        radarSlider.addEventListener('touchstart', () => { 
+          isDraggingRadar = true; 
+          setPlaying(false); 
+        });
+        
+        window.addEventListener('mouseup', () => { 
+          isDraggingRadar = false; 
+        });
+        
+        window.addEventListener('touchend', () => { 
+          isDraggingRadar = false; 
+        });
 
         radarSlider.addEventListener('input', (e) => {
           setPlaying(false);
@@ -2041,10 +2555,14 @@
         function updateProductLabels() {
           const radarDot = document.getElementById('dot-radar');
           const dotClasses = radarDot ? radarDot.className : "livedot";
-          const titleText = product === 'rr' ? "Live radar · Rain Rate (source: PAGASA, processed HERE)" : "Live radar · dBZ reflectivity (source: PAGASA, processed HERE)";
+          const titleText = product === 'rr' 
+            ? "Live radar · Rain Rate (source: PAGASA, processed HERE)" 
+            : "Live radar · dBZ reflectivity (source: PAGASA, processed HERE)";
+            
           radarTileTitle.innerHTML = `<span class="${dotClasses}" id="dot-radar" title="Connection status"></span>` + titleText;
           radarLegendBox.innerHTML = product === 'rr' ? templateRr : templateDbz;
         }
+        
         updateProductLabels();
 
         document.querySelectorAll('.segbtn[data-product]').forEach(btn => {
@@ -2085,11 +2603,17 @@
       { cls: "lvl-adv-expecting", label: "Expecting · Light to Moderate with at times Heavy Rainfall is expected in the next 2–3 hrs", action: "Rainfall is expected to affect the locality within the next 2–3 hrs. Communities should prepare early." },
       { cls: "lvl-adv-affecting", label: "Affecting · Light to Moderate with at times Heavy Rainfall which may persist within 3 hours below HR-WS threshold", action: "Rainfall currently affecting the locality, below Heavy Rainfall Warning threshold." }
     ];
+    
     const rainadvlist = document.getElementById('rainadvlist');
     rainAdv.forEach(c => {
       const row = document.createElement('div');
       row.className = 'classrow';
-      row.innerHTML = `<span class="dot" style="background:${barColor(c.cls)}"></span><div class="classtext"><span class="classname">${c.label}</span><span class="classaction">${c.action}</span></div>`;
+      row.innerHTML = `
+        <span class="dot" style="background:${barColor(c.cls)}"></span>
+        <div class="classtext">
+          <span class="classname">${c.label}</span>
+          <span class="classaction">${c.action}</span>
+        </div>`;
       rainadvlist.appendChild(row);
     });
 
@@ -2098,11 +2622,17 @@
       { cls: "lvl-intense", label: "Orange · Alert · 15–30 mm/hr", action: "Seeks community preparedness. Flooding occurring in several areas." },
       { cls: "lvl-torrential", label: "Red · Emergency · 30+ mm/hr", action: "Seeks community response. Severe widespread flooding." },
     ];
+    
     const classlist = document.getElementById('classlist');
     classes.forEach(c => {
       const row = document.createElement('div');
       row.className = 'classrow';
-      row.innerHTML = `<span class="dot" style="background:${barColor(c.cls)}"></span><div class="classtext"><span class="classname">${c.label}</span><span class="classaction">${c.action}</span></div>`;
+      row.innerHTML = `
+        <span class="dot" style="background:${barColor(c.cls)}"></span>
+        <div class="classtext">
+          <span class="classname">${c.label}</span>
+          <span class="classaction">${c.action}</span>
+        </div>`;
       classlist.appendChild(row);
     });
 
@@ -2110,11 +2640,17 @@
       { cls: "lvl-expecting", label: "Expecting · next 2–3 hrs", action: "Thunderstorms expected to affect the locality." },
       { cls: "lvl-affecting", label: "Affecting · next 2 hrs", action: "Thunderstorms active over the locality. Take precautions." },
     ];
+    
     const tsalist = document.getElementById('tsalist');
     tsa.forEach(c => {
       const row = document.createElement('div');
       row.className = 'classrow';
-      row.innerHTML = `<span class="dot" style="background:${barColor(c.cls)}"></span><div class="classtext"><span class="classname">${c.label}</span><span class="classaction">${c.action}</span></div>`;
+      row.innerHTML = `
+        <span class="dot" style="background:${barColor(c.cls)}"></span>
+        <div class="classtext">
+          <span class="classname">${c.label}</span>
+          <span class="classaction">${c.action}</span>
+        </div>`;
       tsalist.appendChild(row);
     });
   </script>

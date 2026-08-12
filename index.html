@@ -245,7 +245,6 @@
       stroke: var(--rain);
     }
 
-    /* Fixed spacing logic for Clear Button */
     .search-clear-btn {
       color: var(--muted);
       font-size: 0.85rem;
@@ -254,14 +253,14 @@
       visibility: hidden;
       pointer-events: none;
       transform: scale(0.8);
-      width: 0; /* Collapsed when hidden to prevent pushing location btn left */
+      width: 0;
       margin: 0;
       overflow: hidden;
       transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
     }
 
     .search-clear-btn.active {
-      width: 28px; /* Restored width when visible */
+      width: 28px;
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
@@ -375,7 +374,7 @@
     }
 
     /* ==========================================================================
-       Layout Structure (Main, Rows)
+       Layout Structure
        ========================================================================== */
     main {
       position: relative;
@@ -865,7 +864,7 @@
 
     .controls-grid {
       display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+      grid-template-columns: 1.4fr 1fr 1fr;
       gap: 0.5rem;
       align-items: flex-start;
       margin-bottom: 0.4rem;
@@ -1032,7 +1031,6 @@
     .radar-overlay-img {
       image-rendering: pixelated;
       image-rendering: crisp-edges;
-      transition: opacity 0.2s ease;
     }
 
     .basemap-contrast {
@@ -1144,11 +1142,14 @@
 
     .tile-hrw {
       padding: 0;
-      height: auto;
+      height: 100%;
+      min-height: 550px;
+      display: flex;
+      flex-direction: column;
     }
 
     .tile-hrw .tile-label {
-      padding: 0.65rem 0.9rem 0.25rem;
+      padding: 0.65rem 0.9rem 0.6rem;
       margin-bottom: 0;
     }
 
@@ -1329,7 +1330,7 @@
 
   <header>
     <div>
-      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.5.2</div>
+      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.6.0</div>
       <h1>Uulan Ba?</h1>
       <p>Philippines Weather and Rain Dashboard.</p>
     </div>
@@ -1342,10 +1343,6 @@
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
           <div class="search-actions-right">
-            <!-- 
-              Order Swapped: Search Clear button rendered BEFORE location button so it anchors to the left of the location icon
-              instead of pushing the location icon off to the side when hidden.
-            -->
             <button type="button" id="searchClearBtn" class="search-clear-btn" aria-label="Clear search">✕</button>
             <button type="button" id="geoLocateBtn" class="location-btn" title="Use my current location" aria-label="Use my current location">
               <svg class="location-icon-svg" viewBox="0 0 24 24">
@@ -1447,12 +1444,6 @@
                 <button class="segbtn" data-delay="700">Slow</button>
               </div>
             </div>
-            <div class="controls-group">
-              <span class="controls-groupname">Opacity</span>
-              <div style="display: flex; align-items: center; gap: .5rem; height: 100%;">
-                <input type="range" id="radarOpacity" class="radar-slider" min="0.2" max="1.0" step="0.05" value="0.75">
-              </div>
-            </div>
           </div>
 
           <div class="controls-transport">
@@ -1471,17 +1462,25 @@
     </div>
 
     <div class="row row-8-4">
-      <div id="panahonWrapper" class="tile tile-hrw">
-        <div class="tile-label" style="display: flex; justify-content: space-between; align-items: center;">
-          <span>Live hazard map (PANaHON) &middot; <small style="color:var(--amber);">Temporarily Disabled</small></span>
-          <div>
-            <a href="https://www.panahon.gov.ph" target="_blank" rel="noopener">open direct &#8599;</a>
-          </div>
+      <!-- PAGASA NCR Focus Tile -->
+      <div id="prsdWrapper" class="tile tile-hrw">
+        <div class="tile-label" style="border-bottom: 1px solid var(--line);">
+          <span>PAGASA NCR (National Capital Region)</span>
+          <a href="https://www.facebook.com/NCR.PAGASA" target="_blank" rel="noopener">View on Facebook &#8599;</a>
         </div>
-        <div style="padding: 2.5rem 1.5rem; text-align: center; background: var(--panel2); border-radius: 8px; margin: 0.85rem; border: 1px dashed var(--line); color: var(--muted); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🚧</div>
-          <strong style="color: var(--text); font-size: 0.9rem; margin-bottom: 0.25rem;">PANaHON Map Maintenance</strong>
-          <p style="font-size: 0.78rem; margin: 0; max-width: 340px;">The embedded hazard map iframe is temporarily suspended for performance optimizations. You can still access live warnings directly at <a href="https://www.panahon.gov.ph" target="_blank" rel="noopener" style="color:var(--rain);">panahon.gov.ph</a>.</p>
+        
+        <!-- Embedded Facebook Page Plugin Container -->
+        <div style="flex: 1; background: #212d3a; border-bottom-left-radius: 11px; border-bottom-right-radius: 11px; display: flex; justify-content: center; width: 100%; height: 100%; overflow: hidden; min-height: 550px;">
+          <iframe id="prsdIframe" 
+                  src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FNCR.PAGASA&tabs=timeline&width=500&height=1000&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=false&appId" 
+                  width="100%" 
+                  height="100%" 
+                  style="border:none; width: 200%; max-width: 500px; height: 100%; min-height: 550px;" 
+                  scrolling="yes" 
+                  frameborder="0" 
+                  allowfullscreen="true" 
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+          </iframe>
         </div>
       </div>
 
@@ -1505,7 +1504,24 @@
         <div id="changelogContent" class="changelog-content" style="display: none;">
           <div class="version-block">
             <div class="version-tag">
-              v2.5.2 <span class="version-badge-curr">Current</span>
+              v2.6.0 — PANaHON Map Replacement<span class="version-badge-curr">Current</span>
+            </div>
+            <ul class="version-list">
+              <li><strong>PANaHON Map Replacement:</strong> Replacing the PANaHON map with the Facebook page plugin of PAGASA NCR.</li>
+          </div>
+
+          <div class="version-block">
+            <div class="version-tag">
+              v2.5.3 — Radar Layer Bug Fix
+            </div>
+            <ul class="version-list">
+              <li><strong>Radar Layer:</strong> Removed the opacity setting for the radar layer due to bugging issues.</li>
+            </ul>
+          </div>
+          
+          <div class="version-block">
+            <div class="version-tag">
+              v2.5.2 — UI State Sync Fix
             </div>
             <ul class="version-list">
               <li><strong>UI Sync Fix:</strong> Updated the hardcoded HTML for the radar play button to read "⏸ Pause" on initial load to match the auto-playing JavaScript state.</li>
@@ -1513,76 +1529,75 @@
           </div>
           
           <div class="version-block">
-            <div class="version-tag">v2.5.1</div>
+            <div class="version-tag">v2.5.1 — Visual Polish & Fluid Animations</div>
             <ul class="version-list">
               <li><strong>Refined Search Icon:</strong> Replaced the standard emoji magnifying glass in the search preview card with a crisp, matching vector SVG icon.</li>
-              <li><strong>Fluid Animation Pass:</strong> Overhauled animation timings across the dashboard utilizing custom spring-like easing curves (cubic-bezier) for hovers, button clicks, and dropdown expansions, giving the interface a more tactile and premium feel.</li>
-              <li><strong>Live Status Pulses:</strong> Added a subtle pulsing animation to the green/red connection dots indicating when radar and satellite streams are active and live.</li>
+              <li><strong>Fluid Animation Pass:</strong> Overhauled animation timings across the dashboard utilizing custom spring-like easing curves (cubic-bezier) for hovers, button clicks, and dropdown expansions.</li>
+              <li><strong>Live Status Pulses:</strong> Added a subtle pulsing animation to the green/red connection dots indicating active streams.</li>
             </ul>
           </div>
           
           <div class="version-block">
-            <div class="version-tag">v2.5.0</div>
+            <div class="version-tag">v2.5.0 — Location Finder & Regional Search</div>
             <ul class="version-list">
               <li><strong>My Location Finder:</strong> Added an aesthetic geolocation button in the search bar to automatically detect and preview your current weather.</li>
-              <li><strong>Philippines Only Search:</strong> Refined the geocoding search API to strictly return locations and towns within the Philippines.</li>
+              <li><strong>Philippines Only Search:</strong> Refined geocoding search API queries strictly within the Philippines.</li>
             </ul>
           </div>
 
           <div class="version-block">
-            <div class="version-tag">v2.4.0</div>
+            <div class="version-tag">v2.4.0 — Search Controls & Patch Notes Integration</div>
             <ul class="version-list">
-              <li><strong>Search Preview Close Button:</strong> Added a dedicated "✕ Close" button beside the "＋ Add to Cities" button in the search result preview card for easy dismissal.</li>
-              <li><strong>In-App Patch Notes:</strong> Integrated an interactive version history panel directly into the site dashboard.</li>
-              <li><strong>Temporary Map Suspension:</strong> Temporarily disabled the embedded PANaHON hazard map iframe in favor of performance optimization and direct external link access.</li>
+              <li><strong>Search Preview Close Button:</strong> Added a dedicated "✕ Close" button beside the "＋ Add to Cities" button in the search result preview card.</li>
+              <li><strong>In-App Patch Notes:</strong> Integrated an interactive version history panel directly into the dashboard.</li>
+              <li><strong>Temporary Map Suspension:</strong> Temporarily disabled embedded hazard map iframe in favor of performance optimization.</li>
             </ul>
           </div>
 
           <div class="version-block">
             <div class="version-tag">v2.3.1 — Mobile Optimization Pass</div>
             <ul class="version-list">
-              <li><strong>Touch Target Scaling:</strong> Enlarged interactive control targets across satellite scrubbers, radar playback buttons, and town search dropdowns for touchscreens.</li>
-              <li><strong>Mobile Viewport & Overflow Tweaks:</strong> Prevented unintended horizontal scrolling and enhanced map touch gesture responsiveness on mobile viewports.</li>
+              <li><strong>Touch Target Scaling:</strong> Enlarged interactive control targets across satellite scrubbers and radar buttons for touchscreens.</li>
+              <li><strong>Mobile Viewport & Overflow Tweaks:</strong> Prevented horizontal scrolling and enhanced gesture responsiveness.</li>
             </ul>
           </div>
 
           <div class="version-block">
             <div class="version-tag">v2.3.0 — Search-to-Grid Expansion & Cross-Platform PDF Engine</div>
             <ul class="version-list">
-              <li><strong>Auto-Expanding Search Preview:</strong> Selecting a searched town instantly fetches live weather data, auto-expands a preview tile, and provides an "＋ Add to Cities" button.</li>
-              <li><strong>Aesthetic Vector Search Icon:</strong> Replaced standard text characters with a custom inline vector SVG search icon.</li>
-              <li><strong>Mobile PDF Viewer Fallback:</strong> Fixed blank gray screen rendering for official advisories on iOS Safari and Android Chrome using Google Docs PDF Viewer fallback.</li>
+              <li><strong>Auto-Expanding Search Preview:</strong> Selecting a searched town instantly fetches weather data and auto-expands a preview tile.</li>
+              <li><strong>Mobile PDF Viewer Fallback:</strong> Resolved blank rendering for official advisories on iOS and Android browsers.</li>
             </ul>
           </div>
 
           <div class="version-block">
             <div class="version-tag">v2.2.0 — Geocoding Search Integration</div>
             <ul class="version-list">
-              <li><strong>Location Lookup:</strong> Integrated Open-Meteo's Geocoding API to let users query any town or municipality across the Philippines.</li>
+              <li><strong>Location Lookup:</strong> Integrated Open-Meteo Geocoding API for querying any Philippine municipality.</li>
             </ul>
           </div>
 
           <div class="version-block">
             <div class="version-tag">v2.1.1 — Control & Interface Optimizations</div>
             <ul class="version-list">
-              <li><strong>Control Fine-Tuning:</strong> Streamlined and optimized user controls across the radar timeline playback, satellite loop scrubber, and dashboard navigation buttons.</li>
+              <li><strong>Control Fine-Tuning:</strong> Streamlined user controls across the radar timeline playback and satellite loop scrubber.</li>
             </ul>
           </div>
 
           <div class="version-block">
             <div class="version-tag">v2.1.0 — Interactive Cards & Custom City Management</div>
             <ul class="version-list">
-              <li><strong>Expandable City Cards:</strong> Added animated card expansion powered by the View Transitions API.</li>
-              <li><strong>"Uulan Ba?" Verdicts:</strong> Automated smart advice based on hourly precipitation probability and intensity.</li>
-              <li><strong>Hourly Forecast Breakdown:</strong> Added 5-hour probability and temperature trend tables inside expanded cards.</li>
-              <li><strong>Custom Location Storage:</strong> Saved user-added cities persistently using browser localStorage.</li>
+              <li><strong>Expandable City Cards:</strong> Added animated card expansion powered by View Transitions API.</li>
+              <li><strong>"Uulan Ba?" Verdicts:</strong> Automated smart advice based on precipitation probability and intensity.</li>
+              <li><strong>Hourly Forecast Breakdown:</strong> Added 5-hour probability and temperature trend tables.</li>
+              <li><strong>Custom Location Storage:</strong> Saved user-added cities persistently using localStorage.</li>
             </ul>
           </div>
 
           <div class="version-block">
             <div class="version-tag">v2.0.0 — Advanced Radar, Satellite & Hazard Mapping</div>
             <ul class="version-list">
-              <li><strong>Live Radar Engine:</strong> Embedded Leaflet-powered radar view supporting dBZ reflectivity and Rain Rate (mm/h) layers with frame scrubbing.</li>
+              <li><strong>Live Radar Engine:</strong> Embedded Leaflet-powered radar view supporting dBZ reflectivity and Rain Rate layers.</li>
               <li><strong>Himawari Satellite Loop:</strong> Added automated Himawari satellite animation scrubber with frame auto-discovery.</li>
               <li><strong>Official PAGASA Advisories:</strong> Embedded live PAGASA weather advisory views and hazard warning criteria.</li>
             </ul>
@@ -1591,7 +1606,7 @@
           <div class="version-block">
             <div class="version-tag">v1.0.0 — Initial Release</div>
             <ul class="version-list">
-              <li><strong>Core Dashboard Setup:</strong> Built the initial dashboard layout featuring dark mode aesthetics, default major Philippine city tiles, and batched ECMWF Open-Meteo weather fetches.</li>
+              <li><strong>Core Dashboard Setup:</strong> Initial dashboard layout featuring dark mode aesthetics and batched ECMWF weather fetches.</li>
             </ul>
           </div>
         </div>
@@ -1637,6 +1652,11 @@
       { name: "Legazpi", lat: 13.1391, lon: 123.7438 },
       { name: "Tacloban", lat: 11.2543, lon: 125.0000 },
     ];
+
+    function parseManilaTime(isoString) {
+      if (!isoString) return new Date();
+      return new Date(isoString.endsWith('Z') ? isoString : isoString + '+08:00');
+    }
 
     function getCustomCities() {
       try {
@@ -1712,6 +1732,15 @@
       return "☀️ Malabo umulan ngayon, safe ka pa!";
     }
 
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     async function loadRain() {
       const slot = document.getElementById('citygrid-slot');
       const status = document.getElementById('status');
@@ -1731,6 +1760,7 @@
         
         const data = await response.json();
         const resultsArray = Array.isArray(data) ? data : [data];
+        const now = new Date();
 
         const cityDataList = activeCities.map((c, i) => {
           const res = resultsArray[i];
@@ -1740,7 +1770,7 @@
 
           let maxProb = 0;
           if (hourly && hourly.time) {
-            const nowIdx = hourly.time.findIndex(t => new Date(t) >= new Date());
+            const nowIdx = hourly.time.findIndex(t => parseManilaTime(t) >= now);
             const startIdx = nowIdx !== -1 ? nowIdx : 0;
             for (let k = startIdx; k < Math.min(startIdx + 5, hourly.time.length); k++) {
               const prob = hourly.precipitation_probability ? hourly.precipitation_probability[k] : 0;
@@ -1770,11 +1800,11 @@
 
           let hourlyHtml = '';
           if (res.hourly && res.hourly.time) {
-            const nowIdx = res.hourly.time.findIndex(t => new Date(t) >= new Date());
+            const nowIdx = res.hourly.time.findIndex(t => parseManilaTime(t) >= now);
             const startIdx = nowIdx !== -1 ? nowIdx : 0;
             let rows = '';
             for (let i = startIdx; i < Math.min(startIdx + 5, res.hourly.time.length); i++) {
-              const timeStr = new Date(res.hourly.time[i]).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true });
+              const timeStr = parseManilaTime(res.hourly.time[i]).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true });
               const tempVal = res.hourly.temperature_2m[i];
               const probVal = res.hourly.precipitation_probability ? res.hourly.precipitation_probability[i] : 0;
               rows += `
@@ -1798,13 +1828,13 @@
           }
 
           const removeBtnHtml = res.isCustom 
-            ? `<button class="remove-city-btn" title="Remove location" onclick="removeCustomCity('${res.name.replace(/'/g, "\\'")}', event)">&#10005;</button>` 
+            ? `<button class="remove-city-btn" data-city-name="${escapeHtml(res.name)}" title="Remove location">&#10005;</button>` 
             : '';
 
           tile.innerHTML = `
             <div class="bar" style="background:${barColor(info.cls)}"></div>
             <div class="cityname">
-              <span>${res.name}</span>
+              <span>${escapeHtml(res.name)}</span>
               <div class="cityname-right">
                 ${removeBtnHtml}
                 <span class="toggle-icon">&#9660;</span>
@@ -1818,7 +1848,14 @@
             ${hourlyHtml}
           `;
 
-          tile.addEventListener('click', () => {
+          tile.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-city-btn')) {
+              e.stopPropagation();
+              const targetBtn = e.target.closest('.remove-city-btn');
+              removeCustomCity(targetBtn.getAttribute('data-city-name'), e);
+              return;
+            }
+
             const updateState = () => {
               const isExpanded = tile.classList.contains('expanded');
               document.querySelectorAll('.tile-city').forEach(t => {
@@ -1845,8 +1882,8 @@
           slot.appendChild(tile);
         });
 
-        const now = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
-        status.textContent = `Updated ${now} (Manila time) · source: Open-Meteo (ECMWF IFS Batched)`;
+        const nowStr = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
+        status.textContent = `Updated ${nowStr} (Manila time) · source: Open-Meteo (ECMWF IFS Batched)`;
       } catch (e) {
         console.error("Rain data fetch error:", e);
         status.textContent = "Couldn't load live data right now — try refresh.";
@@ -1857,7 +1894,7 @@
       const previewSlot = document.getElementById('search-preview-slot');
       if (!previewSlot) return;
 
-      previewSlot.innerHTML = `<div class="status" style="animation: popIn 0.3s ease;">Fetching weather preview for ${city.name}…</div>`;
+      previewSlot.innerHTML = `<div class="status" style="animation: popIn 0.3s ease;">Fetching weather preview for ${escapeHtml(city.name)}…</div>`;
 
       try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&models=ecmwf_ifs025&current=precipitation,rain,temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation&timezone=Asia%2FManila`;
@@ -1867,10 +1904,11 @@
         const precip = data?.current?.precipitation ?? data?.current?.rain ?? 0;
         const temp = data?.current?.temperature_2m;
         const hourly = data?.hourly;
+        const now = new Date();
 
         let maxProb = 0;
         if (hourly && hourly.time) {
-          const nowIdx = hourly.time.findIndex(t => new Date(t) >= new Date());
+          const nowIdx = hourly.time.findIndex(t => parseManilaTime(t) >= now);
           const startIdx = nowIdx !== -1 ? nowIdx : 0;
           for (let k = startIdx; k < Math.min(startIdx + 5, hourly.time.length); k++) {
             const prob = hourly.precipitation_probability ? hourly.precipitation_probability[k] : 0;
@@ -1881,10 +1919,10 @@
         const info = classify(precip);
         let rows = '';
         if (hourly && hourly.time) {
-          const nowIdx = hourly.time.findIndex(t => new Date(t) >= new Date());
+          const nowIdx = hourly.time.findIndex(t => parseManilaTime(t) >= now);
           const startIdx = nowIdx !== -1 ? nowIdx : 0;
           for (let i = startIdx; i < Math.min(startIdx + 5, hourly.time.length); i++) {
-            const timeStr = new Date(hourly.time[i]).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true });
+            const timeStr = parseManilaTime(hourly.time[i]).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true });
             const tempVal = hourly.temperature_2m[i];
             const probVal = hourly.precipitation_probability ? hourly.precipitation_probability[i] : 0;
             rows += `
@@ -1909,7 +1947,7 @@
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                ${city.name} <small style="font-weight:400; color:var(--muted); font-size: 0.7rem;">(Search Preview)</small>
+                ${escapeHtml(city.name)} <small style="font-weight:400; color:var(--muted); font-size: 0.7rem;">(Search Preview)</small>
               </span>
               <div class="cityname-right">
                 ${!isAlreadyAdded ? `<button class="add-city-btn" id="saveCityBtn">＋ Add to Cities</button>` : `<span style="font-size:0.7rem; color:var(--rain);">✓ Saved in list</span>`}
@@ -2077,9 +2115,9 @@
             searchResults.innerHTML = filteredResults.map(loc => {
               const meta = [loc.admin1, loc.country].filter(Boolean).join(', ');
               return `
-                <div class="search-item" data-name="${loc.name.replace(/"/g, '&quot;')}" data-lat="${loc.latitude}" data-lon="${loc.longitude}">
-                  <span class="search-item-name">${loc.name}</span>
-                  <span class="search-item-meta">${meta}</span>
+                <div class="search-item" data-name="${escapeHtml(loc.name)}" data-lat="${loc.latitude}" data-lon="${loc.longitude}">
+                  <span class="search-item-name">${escapeHtml(loc.name)}</span>
+                  <span class="search-item-meta">${escapeHtml(meta)}</span>
                 </div>
               `;
             }).join('');
@@ -2287,17 +2325,25 @@
         };
 
         if (typeof L === 'undefined') throw new Error("Leaflet failed to load");
+        const mapContainer = document.getElementById('radarmap');
         const map = L.map('radarmap', {
           zoomControl: false,
           attributionControl: false,
           minZoom: 3,
           maxZoom: 22,
-          zoomSnap: 0.25,
+          zoomSnap: 0,
           zoomDelta: 0.5,
           scrollWheelZoom: true
         }).setView([12.6, 121.8], 6);
         
         window.leafletMap = map;
+
+        if (window.ResizeObserver && mapContainer) {
+          const resizeObserver = new ResizeObserver(() => {
+            map.invalidateSize();
+          });
+          resizeObserver.observe(mapContainer);
+        }
 
         L.control.zoom({ position: 'topright' }).addTo(map);
         L.tileLayer(TILE_URL, { 
@@ -2307,7 +2353,6 @@
         }).addTo(map);
 
         let overlay = null;
-        let opacityVal = 0.75;
 
         function boundsToLatLngBounds() {
           return [[bounds.south, bounds.west], [bounds.north, bounds.east]];
@@ -2316,10 +2361,8 @@
         function showFrame(url) {
           if (overlay) {
             overlay.setUrl(url);
-            overlay.setOpacity(opacityVal);
           } else {
             overlay = L.imageOverlay(url, boundsToLatLngBounds(), { 
-              opacity: opacityVal, 
               className: 'radar-overlay-img' 
             }).addTo(map);
           }
@@ -2331,7 +2374,6 @@
         const stepBackBtn = document.getElementById('radarStepBack');
         const stepFwdBtn = document.getElementById('radarStepFwd');
         const radarSlider = document.getElementById('radarSlider');
-        const opacitySlider = document.getElementById('radarOpacity');
         const recenterBtn = document.getElementById('radarRecenter');
 
         let rawFilenames = [];
@@ -2453,13 +2495,6 @@
         if (recenterBtn) {
           recenterBtn.addEventListener('click', () => {
             map.setView([12.6, 121.8], 6);
-          });
-        }
-
-        if (opacitySlider) {
-          opacitySlider.addEventListener('input', (e) => {
-            opacityVal = parseFloat(e.target.value);
-            if (overlay) overlay.setOpacity(opacityVal);
           });
         }
 

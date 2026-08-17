@@ -701,7 +701,7 @@
     }
 
     /* ==========================================================================
-       Satellite Tile
+       Satellite & Image Tile Structure (Reused for ECMWF)
        ========================================================================== */
     .tile-sat {
       padding: 0;
@@ -780,7 +780,7 @@
        ========================================================================== */
     .tile-radar {
       padding: 0;
-      height: clamp(480px, 80vh, 640px);
+      height: clamp(780px, 90vh, 940px);
       display: flex;
       flex-direction: column;
     }
@@ -1337,7 +1337,7 @@
         grid-template-columns: 1fr;
       }
       .tile-radar {
-        height: clamp(440px, 75vh, 580px);
+        height: clamp(540px, 80vh, 680px);
       }
       .tile-sat, 
       .tile-advisory {
@@ -1375,7 +1375,7 @@
 
   <header>
     <div>
-      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.7.0</div>
+      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.6.0</div>
       <h1>Uulan Ba?</h1>
       <p>Philippines Weather and Rain Dashboard.</p>
     </div>
@@ -1517,7 +1517,7 @@
         <!-- Embedded Facebook Page Plugin Container -->
         <div id="prsdIframeContainer" style="flex: 1; background: #212d3a; border-bottom-left-radius: 11px; border-bottom-right-radius: 11px; display: flex; justify-content: center; width: 100%; height: 100%; overflow: hidden; min-height: 550px;">
           <iframe id="prsdIframe" 
-                  src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FNCR.PAGASA&tabs=timeline&width=500&height=1000&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=false&appId" 
+                  src=""
                   width="100%" 
                   height="100%" 
                   style="border:none; width: 100%; max-width: 500px; height: 100%; min-height: 550px;" 
@@ -1540,59 +1540,6 @@
       </div>
     </div>
 
-    <!-- TILE ROW: Tropical Cyclone (TC)-Threat Potential & Criteria Legend -->
-    <div class="row row-8-4" style="margin-bottom: 0.75rem;">
-      <div class="tile tile-tc-threat" style="padding: 0; height: clamp(900px, 90vh, 1500px); display: flex; flex-direction: column;">
-        <div class="tile-label" style="padding: 0.65rem 0.9rem 0.25rem; margin-bottom: 0; flex-shrink: 0;">
-          <span>Tropical Cyclone (TC)-Threat Potential</span>
-          <div style="display: flex; gap: .6rem;">
-            <a href="https://pubfiles.pagasa.dost.gov.ph/pagasaweb/files/climate/tcthreat/TC_Threat_and_S2S_Forecast.pdf" target="_blank" rel="noopener">Source PDF &#8599;</a>
-          </div>
-        </div>
-        <div id="tc-threat-container" style="position: relative; overflow: hidden; flex: 1; background: #1A232E; border-bottom-left-radius: 11px; border-bottom-right-radius: 11px;">
-          <!-- Content injected via script -->
-        </div>
-      </div>
-
-      <!-- TC THREAT CRITERIA / LEGEND TILE -->
-      <div class="tile tile-criteria" style="align-self: start;">
-        <div class="tile-label"><span>TC Threat Criteria</span></div>
-        <div class="classsection classsection-first">Likelihood of TC Formation</div>
-        
-        <div class="classrow">
-          <span class="legend-swatch" style="background-color: #B20000;"></span>
-          <div class="classtext">
-            <span class="classname" style="color: #FF5555;">Active TC</span>
-            <span class="classaction">Existing TC inside the PMD</span>
-          </div>
-        </div>
-
-        <div class="classrow">
-          <span class="legend-swatch hatched-red"></span>
-          <div class="classtext">
-            <span class="classname" style="color: #FF6666;">High</span>
-            <span class="classaction">Higher chance of formation</span>
-          </div>
-        </div>
-
-        <div class="classrow">
-          <span class="legend-swatch hatched-orange"></span>
-          <div class="classtext">
-            <span class="classname" style="color: #FFCC00;">Moderate</span>
-            <span class="classaction">Has a chance of formation</span>
-          </div>
-        </div>
-
-        <div class="classrow">
-          <span class="legend-swatch" style="background-color: #FFFF00;"></span>
-          <div class="classtext">
-            <span class="classname" style="color: #FFFF66;">Low</span>
-            <span class="classaction">Less chance of formation</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="row row-1col">
       <div class="tile">
         <div class="tile-label" style="display: flex; justify-content: space-between; align-items: center;">
@@ -1600,24 +1547,15 @@
           <button id="toggleChangelogBtn" class="segbtn" style="cursor:pointer;">Show Changelog</button>
         </div>
         <div id="changelogContent" class="changelog-content" style="display: none;">
+          
           <div class="version-block">
             <div class="version-tag">
-              v2.7.0 — Tropical Cyclone Threat Potential<span class="version-badge-curr">Current</span>
+              v2.6.0 — PagAsa NCR Facebook Plugin<span class="version-badge-curr">Current</span>
             </div>
             <ul class="version-list">
-              <li><strong>TC-Threat Potential Tile:</strong> Added the new Tropical Cyclone (TC)-Threat Potential tile along with its corresponding evaluation criteria..</li>
-            </ul>
-          </div>
-    
-          <div class="version-block">
-            <div class="version-tag">
-              v2.6.0 — PagAsa NCR Facebook Plugin Integration
-              </div>
-            <ul class="version-list">
               <li><strong>PANaHON Map Replacement:</strong> Replacing the PANaHON map with the Facebook page plugin of PAGASA NCR.</li>
-            </ul>
           </div>
-          
+
           <div class="version-block">
             <div class="version-tag">
               v2.5.3 — Radar Layer Bug Fix
@@ -2260,6 +2198,7 @@
       });
     })();
 
+    // HIMAWARI SATELLITE SCRIPT
     (function() {
       const img = document.getElementById('satimg');
       const dot = document.getElementById('dot-sat');
@@ -2420,30 +2359,38 @@
       }
     })();
 
-    /* SCRIPT FOR TC THREAT VIEWER */
-    (function initTcThreatViewer() {
-      const pdfUrl = 'https://pubfiles.pagasa.dost.gov.ph/pagasaweb/files/climate/tcthreat/TC_Threat_and_S2S_Forecast.pdf?v=' + Date.now();
-      const container = document.getElementById('tc-threat-container');
-      if (!container) return;
-      
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    /* SCRIPT FOR FACEBOOK NCR PLUGIN RESPONSIVE LOADER */
+    (function initFbIframe() {
+      const container = document.getElementById('prsdIframeContainer');
+      const iframe = document.getElementById('prsdIframe');
+      if (!container || !iframe) return;
 
-      const cropStyle = 'position: absolute; top: -8%; left: -6%; width: 225%; height: 220%;';
+      function updateIframeSrc() {
+        let width = container.offsetWidth;
+        if (width === 0) {
+          width = window.innerWidth > 500 ? 500 : window.innerWidth - 40;
+        }
+        if (width > 500) width = 500;
+        if (width < 180) width = 180;
 
-      if (isMobile) {
-        container.innerHTML = `
-          <div style="${cropStyle}">
-            <iframe src="https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true" width="100%" height="100%" frameborder="0"></iframe>
-          </div>`;
-      } else {
-        container.innerHTML = `
-          <div style="${cropStyle}">
-            <embed src="${pdfUrl}#page=1&view=FitH&toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="100%" height="100%">
-          </div>`;
+        const currentSrc = iframe.src;
+        const newSrc = `https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FNCR.PAGASA&tabs=timeline&width=${Math.floor(width)}&height=1000&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=false&appId`;
+        
+        if (currentSrc !== newSrc) {
+          iframe.src = newSrc;
+        }
       }
+
+      updateIframeSrc();
+
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(updateIframeSrc, 300);
+      });
     })();
 
-    (function() {
+(function() {
       try {
         const DATA_BASE = "https://data.garbinwx.org";
         const TILE_URL = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
@@ -2478,7 +2425,7 @@
 
         L.control.zoom({ position: 'topright' }).addTo(map);
         L.tileLayer(TILE_URL, { 
-          maxZoom: 22, 
+          maxZoom: 20, 
           maxNativeZoom: 19, 
           className: 'basemap-contrast' 
         }).addTo(map);
@@ -2759,7 +2706,7 @@
       }
     })();
 
-    (function initChangelogToggle() {
+        (function initChangelogToggle() {
       const btn = document.getElementById('toggleChangelogBtn');
       const content = document.getElementById('changelogContent');
       if (!btn || !content) return;
@@ -2829,6 +2776,5 @@
       tsalist.appendChild(row);
     });
   </script>
-
 </body>
 </html>

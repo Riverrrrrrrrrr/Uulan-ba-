@@ -659,7 +659,7 @@
     }
 
     .tile-city.expanded .city-details {
-      max-height: 350px;
+      max-height: 650px;
       opacity: 1;
       margin-top: 0.8rem;
       padding-top: 0.8rem;
@@ -780,7 +780,7 @@
        ========================================================================== */
     .tile-radar {
       padding: 0;
-      height: clamp(780px, 90vh, 940px);
+      height: clamp(680px, 90vh, 940px);
       display: flex;
       flex-direction: column;
     }
@@ -1375,9 +1375,9 @@
 
   <header>
     <div>
-      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.6.0</div>
+      <div class="eyebrow">Philippines &middot; live conditions &middot; v2.7.0</div>
       <h1>Uulan Ba?</h1>
-      <p>Philippines Weather and Rain Dashboard.</p>
+      <p>Philippines Weather and Rain Dashboard. | Personal Project.</p>
     </div>
     <div class="header-actions">
       <div class="search-wrapper">
@@ -1436,7 +1436,7 @@
 
       <div class="tile tile-advisory">
         <div class="tile-label">
-          <span>PAGASA weather advisory (live)</span>
+          <span><span class="livedot checking" id="dot-advisory" title="Connection status"></span>PAGASA weather advisory (live)</span>
           <div style="display: flex; gap: .6rem;">
             <a href="https://pubfiles.pagasa.dost.gov.ph/tamss/weather/advisory.pdf" target="_blank" rel="noopener">PDF &#8599;</a>
             <a href="https://www.pagasa.dost.gov.ph/weather/weather-advisory" target="_blank" rel="noopener">site &#8599;</a>
@@ -1550,12 +1550,31 @@
           
           <div class="version-block">
             <div class="version-tag">
-              v2.6.0 — PagAsa NCR Facebook Plugin<span class="version-badge-curr">Current</span>
+              v2.7.0 — Next 5 Days Forecast Integration<span class="version-badge-curr">Current</span>
+            </div>
+            <ul class="version-list">
+              <li><strong>5-Day Forecast View:</strong> Added a 5-day daily forecast breakdown (min/max temp & rain probability) alongside the 5-hour hourly forecast on expanded city tiles and search previews.</li>
+            </ul>
+          </div>
+
+          <div class="version-block">
+            <div class="version-tag">
+              v2.6.1 — PagAsa Weather Advisory Check
+            </div>
+            <ul class="version-list">
+              <li><strong>PagAsa Weather Advisory Check:</strong> Weather advisories now use the livedot indicator to show real-time status. If no new PAGASA advisory has been issued in the last 24 hours, the system will accurately reflect that there are no active recent updates.</li>
+            </ul>
+          </div>
+
+          <div class="version-block">
+            <div class="version-tag">
+              v2.6.0 — PagAsa NCR Facebook Plugin
             </div>
             <ul class="version-list">
               <li><strong>PANaHON Map Replacement:</strong> Replacing the PANaHON map with the Facebook page plugin of PAGASA NCR.</li>
+            </ul>
           </div>
-
+          
           <div class="version-block">
             <div class="version-tag">
               v2.5.3 — Radar Layer Bug Fix
@@ -1693,10 +1712,7 @@
       { name: "Cebu City", lat: 10.3157, lon: 123.8854 },
       { name: "Davao City", lat: 7.1907, lon: 125.4553 },
       { name: "Baguio", lat: 16.4023, lon: 120.5960 },
-      { name: "Iloilo City", lat: 10.7202, lon: 122.5621 },
-      { name: "Cagayan de Oro", lat: 8.4542, lon: 124.6319 },
-      { name: "Legazpi", lat: 13.1391, lon: 123.7438 },
-      { name: "Tacloban", lat: 11.2543, lon: 125.0000 },
+      { name: "Kawit, Cavite", lat: 14.4443, lon: 120.9016 },
     ];
 
     function parseManilaTime(isoString) {
@@ -1799,7 +1815,7 @@
         const lats = activeCities.map(c => c.lat).join(',');
         const lons = activeCities.map(c => c.lon).join(',');
 
-        const batchUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&models=ecmwf_ifs025&current=precipitation,rain,temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation&timezone=Asia%2FManila`;
+        const batchUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&models=ecmwf_ifs025&current=precipitation,rain,temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FManila`;
         
         const response = await fetch(batchUrl);
         if (!response.ok) throw new Error("Network error fetching weather data");
@@ -1813,6 +1829,7 @@
           const precip = res?.current?.precipitation ?? res?.current?.rain ?? 0;
           const temp = res?.current?.temperature_2m;
           const hourly = res?.hourly;
+          const daily = res?.daily;
 
           let maxProb = 0;
           if (hourly && hourly.time) {
@@ -1832,6 +1849,7 @@
             precip, 
             temp, 
             hourly, 
+            daily,
             maxProb 
           };
         });
@@ -1844,16 +1862,15 @@
           tile.className = 'tile tile-city';
           tile.style.animationDelay = `${0.04 * (index + 1)}s`;
 
-          let hourlyHtml = '';
+          let hourlyRows = '';
           if (res.hourly && res.hourly.time) {
             const nowIdx = res.hourly.time.findIndex(t => parseManilaTime(t) >= now);
             const startIdx = nowIdx !== -1 ? nowIdx : 0;
-            let rows = '';
             for (let i = startIdx; i < Math.min(startIdx + 5, res.hourly.time.length); i++) {
               const timeStr = parseManilaTime(res.hourly.time[i]).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true });
               const tempVal = res.hourly.temperature_2m[i];
               const probVal = res.hourly.precipitation_probability ? res.hourly.precipitation_probability[i] : 0;
-              rows += `
+              hourlyRows += `
                 <div class="hourly-row">
                   <span style="font-weight: 600;">${timeStr}</span>
                   <span>${tempVal !== undefined ? tempVal.toFixed(1) + '°C' : ''}</span>
@@ -1861,17 +1878,38 @@
                 </div>
               `;
             }
-            const verdictText = getUulanBaVerdict(res.maxProb, res.precip);
-            hourlyHtml = `
-              <div class="city-details">
-                <div class="city-details-inner">
-                  <div class="uulan-verdict">${verdictText}</div>
-                  <div class="hourly-title">Next 5 Hours Forecast</div>
-                  <div class="hourly-table">${rows}</div>
-                </div>
-              </div>
-            `;
           }
+
+          let dailyRows = '';
+          if (res.daily && res.daily.time) {
+            for (let i = 0; i < Math.min(5, res.daily.time.length); i++) {
+              const dayDate = new Date(res.daily.time[i] + 'T00:00:00+08:00');
+              const dayStr = dayDate.toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric' });
+              const minTemp = res.daily.temperature_2m_min ? res.daily.temperature_2m_min[i] : undefined;
+              const maxTemp = res.daily.temperature_2m_max ? res.daily.temperature_2m_max[i] : undefined;
+              const probVal = res.daily.precipitation_probability_max ? res.daily.precipitation_probability_max[i] : 0;
+              const tempStr = (minTemp !== undefined && maxTemp !== undefined) ? `${minTemp.toFixed(0)}° / ${maxTemp.toFixed(0)}°C` : '';
+              dailyRows += `
+                <div class="hourly-row">
+                  <span style="font-weight: 600;">${dayStr}</span>
+                  <span>${tempStr}</span>
+                  <span style="color: ${probVal > 50 ? 'var(--rain)' : 'var(--muted)'}; font-weight: 600;">${probVal}% rain</span>
+                </div>
+              `;
+            }
+          }
+
+          const verdictText = getUulanBaVerdict(res.maxProb, res.precip);
+          const hourlyHtml = `
+            <div class="city-details">
+              <div class="city-details-inner">
+                <div class="uulan-verdict">${verdictText}</div>
+                <div class="hourly-title">Next 5 Hours Forecast</div>
+                <div class="hourly-table">${hourlyRows}</div>
+                ${dailyRows ? `<div class="hourly-title" style="margin-top: 0.85rem;">Next 5 Days Forecast</div><div class="hourly-table">${dailyRows}</div>` : ''}
+              </div>
+            </div>
+          `;
 
           const removeBtnHtml = res.isCustom 
             ? `<button class="remove-city-btn" data-city-name="${escapeHtml(res.name)}" title="Remove location">&#10005;</button>` 
@@ -1943,13 +1981,14 @@
       previewSlot.innerHTML = `<div class="status" style="animation: popIn 0.3s ease;">Fetching weather preview for ${escapeHtml(city.name)}…</div>`;
 
       try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&models=ecmwf_ifs025&current=precipitation,rain,temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation&timezone=Asia%2FManila`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&models=ecmwf_ifs025&current=precipitation,rain,temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FManila`;
         const res = await fetch(url);
         const data = await res.json();
 
         const precip = data?.current?.precipitation ?? data?.current?.rain ?? 0;
         const temp = data?.current?.temperature_2m;
         const hourly = data?.hourly;
+        const daily = data?.daily;
         const now = new Date();
 
         let maxProb = 0;
@@ -1963,7 +2002,7 @@
         }
 
         const info = classify(precip);
-        let rows = '';
+        let hourlyRows = '';
         if (hourly && hourly.time) {
           const nowIdx = hourly.time.findIndex(t => parseManilaTime(t) >= now);
           const startIdx = nowIdx !== -1 ? nowIdx : 0;
@@ -1971,10 +2010,29 @@
             const timeStr = parseManilaTime(hourly.time[i]).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true });
             const tempVal = hourly.temperature_2m[i];
             const probVal = hourly.precipitation_probability ? hourly.precipitation_probability[i] : 0;
-            rows += `
+            hourlyRows += `
               <div class="hourly-row">
                 <span style="font-weight: 600;">${timeStr}</span>
                 <span>${tempVal !== undefined ? tempVal.toFixed(1) + '°C' : ''}</span>
+                <span style="color: ${probVal > 50 ? 'var(--rain)' : 'var(--muted)'}; font-weight: 600;">${probVal}% rain</span>
+              </div>
+            `;
+          }
+        }
+
+        let dailyRows = '';
+        if (daily && daily.time) {
+          for (let i = 0; i < Math.min(5, daily.time.length); i++) {
+            const dayDate = new Date(daily.time[i] + 'T00:00:00+08:00');
+            const dayStr = dayDate.toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric' });
+            const minTemp = daily.temperature_2m_min ? daily.temperature_2m_min[i] : undefined;
+            const maxTemp = daily.temperature_2m_max ? daily.temperature_2m_max[i] : undefined;
+            const probVal = daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : 0;
+            const tempStr = (minTemp !== undefined && maxTemp !== undefined) ? `${minTemp.toFixed(0)}° / ${maxTemp.toFixed(0)}°C` : '';
+            dailyRows += `
+              <div class="hourly-row">
+                <span style="font-weight: 600;">${dayStr}</span>
+                <span>${tempStr}</span>
                 <span style="color: ${probVal > 50 ? 'var(--rain)' : 'var(--muted)'}; font-weight: 600;">${probVal}% rain</span>
               </div>
             `;
@@ -2002,11 +2060,12 @@
             </div>
             <div class="citymeta">${temp !== undefined ? temp.toFixed(1) + '°C' : ''}</div>
             <div class="rainrow"><span class="rainval">${precip.toFixed(1)}</span><span class="rainunit">mm/hr</span></div>
-            <div class="city-details" style="max-height: 280px; opacity: 1; margin-top: .8rem; padding-top: .8rem; border-top-color: var(--line);">
+            <div class="city-details" style="max-height: 650px; opacity: 1; margin-top: .8rem; padding-top: .8rem; border-top-color: var(--line);">
               <div class="city-details-inner">
                 <div class="uulan-verdict">${verdictText}</div>
                 <div class="hourly-title">Next 5 Hours Forecast</div>
-                <div class="hourly-table">${rows}</div>
+                <div class="hourly-table">${hourlyRows}</div>
+                ${dailyRows ? `<div class="hourly-title" style="margin-top: 0.85rem;">Next 5 Days Forecast</div><div class="hourly-table">${dailyRows}</div>` : ''}
               </div>
             </div>
           </div>
@@ -2334,11 +2393,66 @@
       setInterval(discoverFrames, 5 * 60 * 1000);
     })();
 
-    (function initPagasaPdfViewer() {
+    (async function initPagasaPdfViewer() {
       const pdfUrl = 'https://pubfiles.pagasa.dost.gov.ph/tamss/weather/advisory.pdf';
       const container = document.getElementById('pagasa-pdf-container');
+      const dot = document.getElementById('dot-advisory');
       if (!container) return;
       
+      let isRecent = true;
+      let hasError = false;
+      let updateTimeText = '';
+      
+      try {
+        const res = await fetch(pdfUrl, { method: 'HEAD', cache: 'no-cache' });
+        if (res.ok) {
+           const lastModified = res.headers.get('Last-Modified');
+           if (lastModified) {
+              const fileDate = new Date(lastModified);
+              const now = new Date();
+              const diffHours = (now - fileDate) / (1000 * 60 * 60);
+              
+              if (diffHours > 24) {
+                 isRecent = false;
+              } else {
+                 updateTimeText = `Updated: ${fileDate.toLocaleTimeString('en-PH', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
+              }
+           }
+        } else {
+           hasError = true;
+        }
+      } catch (err) {
+        console.warn("Could not check PDF Last-Modified header due to network/CORS. Rendering fallback.", err);
+      }
+
+      if (dot) {
+         dot.classList.remove('checking', 'down');
+         if (hasError) {
+             dot.classList.add('down');
+             dot.title = "Connection error";
+         } else if (!isRecent) {
+             dot.classList.add('checking'); 
+             dot.title = "No active advisory";
+         } else {
+             dot.title = updateTimeText ? `Live advisory active (${updateTimeText})` : "Live advisory active";
+         }
+      }
+
+      if (!isRecent) {
+          container.innerHTML = `
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--muted); text-align:center; padding: 2rem;">
+              <svg viewBox="0 0 24 24" style="width:52px; height:52px; margin-bottom:1.2rem; fill:none; stroke:#8FA1B0; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="9" y1="15" x2="15" y2="15"></line>
+              </svg>
+              <h3 style="margin: 0 0 0.5rem; color:var(--text); font-size:1.15rem;">No Recent Advisory</h3>
+              <p style="margin:0; font-size:0.85rem; line-height:1.5; max-width:240px;">The latest weather advisory is older than 24 hours. There are no active advisories at this time.</p>
+            </div>
+          `;
+          return;
+      }
+
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
 
       if (isMobile) {
@@ -2390,7 +2504,7 @@
       });
     })();
 
-(function() {
+    (function() {
       try {
         const DATA_BASE = "https://data.garbinwx.org";
         const TILE_URL = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
@@ -2636,7 +2750,7 @@
         const radarTileTitle = document.getElementById('radarTileTitle');
         const radarLegendBox = document.getElementById('radarLegendBox');
 
-        const templateDbz = `
+                const templateDbz = `
           <div class="legend-wrapper">
             <div class="legend-bar-center" style="width: 14px; background: linear-gradient(to top, #444444 0%, #888888 12%, #cccccc 14.5%, #00ff00 15%, #00dd00 30%, #ffff00 42%, #ff8800 58%, #ff0000 75%, #ff00ff 88%, #aa00cc 100%);"></div>
             <div class="legend-label left" style="bottom: 0%;">dBZ 0</div>
@@ -2660,66 +2774,55 @@
               <div class="legend-block-layer" style="bottom: 85.8%; height: 14.2%; background: #FF00FF;"></div>
             </div>
             <div class="legend-label left" style="bottom: 0%;">dBZ 0</div>
-            <div class="legend-label left" style="bottom: 14.3%;">15</div>
-            <div class="legend-label left" style="bottom: 35.7%;">30</div>
-            <div class="legend-label left" style="bottom: 85.8%;">40</div>
+            <div class="legend-label left" style="bottom: 14.3%;">10</div>
+            <div class="legend-label left" style="bottom: 35.7%;">20</div>
+            <div class="legend-label left" style="bottom: 85.8%;">30</div>
             <div class="legend-label right" style="bottom: 0%;">Clutter</div>
-            <div class="legend-label right" style="bottom: 14.3%;">3 mm/h</div>
+            <div class="legend-label right" style="bottom: 14.3%;">3 mm/hr</div>
             <div class="legend-label right" style="bottom: 28.6%;">10</div>
             <div class="legend-label right" style="bottom: 42.9%;">20</div>
-            <div class="legend-label right" style="bottom: 57.2%;">30</div>
+            <div class="legend-label right" style="bottom: 57.2%;">40</div>
             <div class="legend-label right" style="bottom: 71.5%;">45</div>
-            <div class="legend-label right" style="bottom: 85.8%;">65</div>
+            <div class="legend-label right" style="bottom: 85.8%;">60</div>
             <div class="legend-label right" style="bottom: 100%;">65+</div>
+
           </div>
         `;
 
-        function updateProductLabels() {
-          const radarDot = document.getElementById('dot-radar');
-          const dotClasses = radarDot ? radarDot.className : "livedot";
-          const titleText = product === 'rr' 
-            ? "Live radar · Rain Rate (source: PAGASA, processed HERE)" 
-            : "Live radar · dBZ reflectivity (source: PAGASA, processed HERE)";
-            
-          radarTileTitle.innerHTML = `<span class="${dotClasses}" id="dot-radar" title="Connection status"></span>` + titleText;
-          radarLegendBox.innerHTML = product === 'rr' ? templateRr : templateDbz;
-        }
-        
-        updateProductLabels();
 
         document.querySelectorAll('.segbtn[data-product]').forEach(btn => {
           btn.addEventListener('click', () => {
             document.querySelectorAll('.segbtn[data-product]').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             product = btn.dataset.product;
-            updateProductLabels();
-            buildFrameUrls();
-            goToFrame(idx);
+            radarLegendBox.innerHTML = product === "rr" ? templateRr : templateDbz;
+            radarTileTitle.innerHTML = `<span class="livedot checking" id="dot-radar" title="Connection status"></span>Live radar &middot; ${product === "rr" ? "Rain Rate (mm/h)" : "dBZ reflectivity"} (source: PAGASA, processed HERE)`;
+            loadFrameList();
           });
         });
 
+        radarLegendBox.innerHTML = templateDbz;
         loadFrameList();
         setInterval(loadFrameList, 5 * 60 * 1000);
-        setTimeout(() => map.invalidateSize(), 200);
-      } catch (err) {
-        console.error("Radar map failed:", err);
+      } catch (e) {
+        console.error("Radar initialization failed:", e);
       }
     })();
 
-        (function initChangelogToggle() {
-      const btn = document.getElementById('toggleChangelogBtn');
-      const content = document.getElementById('changelogContent');
-      if (!btn || !content) return;
-
-      btn.addEventListener('click', () => {
-        const isHidden = content.style.display === 'none';
-        content.style.display = isHidden ? 'block' : 'none';
-        btn.textContent = isHidden ? 'Hide Changelog' : 'Show Changelog';
-      });
+    (function() {
+      const toggleChangelogBtn = document.getElementById('toggleChangelogBtn');
+      const changelogContent = document.getElementById('changelogContent');
+      if (toggleChangelogBtn && changelogContent) {
+        toggleChangelogBtn.addEventListener('click', () => {
+          const isHidden = changelogContent.style.display === 'none';
+          changelogContent.style.display = isHidden ? 'block' : 'none';
+          toggleChangelogBtn.textContent = isHidden ? 'Hide Changelog' : 'Show Changelog';
+          toggleChangelogBtn.classList.toggle('active');
+        });
+      }
     })();
-
-    loadRain();
-    setInterval(loadRain, 10 * 60 * 1000);
+    
+    document.addEventListener("DOMContentLoaded", loadRain);
 
     const rainAdv = [
       { cls: "lvl-adv-expecting", label: "Expecting · Light to Moderate with at times Heavy Rainfall is expected in the next 2–3 hrs", action: "Rainfall is expected to affect the locality within the next 2–3 hrs. Communities should prepare early." },
